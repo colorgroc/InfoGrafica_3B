@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objectt.cpp" />
     <ClCompile Include="src\main.cc" />
     <ClCompile Include="src\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Objectt.h" />
     <ClInclude Include="src\Shader.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

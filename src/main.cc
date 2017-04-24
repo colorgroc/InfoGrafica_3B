@@ -16,8 +16,8 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-
 #include "Shader.h"
+#include "Objectt.h"
 using namespace glm;
 using namespace std;
 
@@ -219,6 +219,7 @@ int main()
 		}
 
 		ourShader.Use();
+		//CAMARA
 		vec3 posCam = vec3(0.0f, 0.0f, 3.0f);
 		vec3 cambioCam = vec3(0.0, 0.0, 0.0);
 		vec3 camDir = normalize(posCam - cambioCam);//para hacer que la camara apunte hacia la z positiva y no negativa que es como inizia
@@ -227,23 +228,19 @@ int main()
 		vec3 camX = cross(camDir, upp); //se hace e producto vectorial de un vector hacia arriba y el vector de la z para q de un vector positivo en eje x
 
 		vec3 camY = cross(camX, camDir); // camY, camX  y camDir son los tres vectores ue necesitamos para crear nuestra camara
-		//GLfloat cameraSpeed = 0.05f;
 
-		GLfloat currTime = glfwGetTime();
+		GLfloat currTime = glfwGetTime();//DELTA TIME
 		deltaTime = currTime - lastFrame;
 		lastFrame = currTime;
 		camSpeed = 3.f * deltaTime;
+
 		GLfloat radio = 8.0f;
 		GLfloat X = sin(glfwGetTime()) * radio;
 		GLfloat Z = cos(glfwGetTime()) * radio;
 		glm::mat4 view;
 
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		
 
-		/*glm::mat4 view;
-		glm::mat4 projection;
-		view = translate(view, glm::vec3(0.0f, 0.0f, -3.f));*/
 		mat4 projection;
 		projection = glm::perspective(fov, (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
@@ -256,7 +253,7 @@ int main()
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
 		glBindVertexArray(VAO);
-		for (GLuint i = 0; i < 10; i++)
+		for (GLuint i = 0; i < 10; i++)//MOVER LOS CUBOS
 		{
 	
 			glm::mat4 model;
@@ -282,7 +279,6 @@ int main()
 		}
 		glBindVertexArray(0);
 
-		// Swap the screen buffers
 		glfwSwapBuffers(window);
 	}
 
@@ -318,7 +314,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-void DoMovment(GLFWwindow* window) {
+void DoMovment(GLFWwindow* window) { //MOVER CAMARA
 	GLint a = glfwGetKey(window, GLFW_KEY_A);
 	GLint w = glfwGetKey(window, GLFW_KEY_W);
 	GLint s = glfwGetKey(window, GLFW_KEY_S);
@@ -349,7 +345,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	if (firstMouse)
+	if (firstMouse) //GIRO DE LA CAMARA
 	{
 		lastX = xpos;
 		lastY = ypos;
