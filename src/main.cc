@@ -15,9 +15,11 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
-
-#include "Shader.h"
-#include "Objectt.h"
+#include <assimp\Importer.hpp>
+#include <assimp\scene.h>
+#include <assimp\postprocess.h>
+#include "Shader.hh"
+#include "Object.h"
 using namespace glm;
 using namespace std;
 
@@ -158,7 +160,7 @@ int main()
 	glBindVertexArray(0); 
 
 
-
+	//TEXTURA
 	GLuint texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -252,8 +254,10 @@ int main()
 	
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
-		glBindVertexArray(VAO);
-		for (GLuint i = 0; i < 10; i++)//MOVER LOS CUBOS
+
+		//glBindVertexArray(VAO);
+
+	/*	for (GLuint i = 0; i < 10; i++)//MOVER LOS CUBOS
 		{
 	
 			glm::mat4 model;
@@ -276,8 +280,8 @@ int main()
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		glBindVertexArray(0);
+		}*/
+		//glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
 	}

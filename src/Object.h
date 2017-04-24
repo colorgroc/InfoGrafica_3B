@@ -6,15 +6,15 @@
 using namespace glm;
 
 
-class Objectt {
+class Object {
 
 public:
 	enum FigureType {
 		cube = 0,
 	};
 
-	Objectt(vec3 scale, vec3 rotation, vec3 position, FigureType typef);
-	~Objectt();
+	Object(vec3 scale, vec3 rotation, vec3 position, FigureType typef);
+	~Object();
 
 	void Draw();
 	void Move(vec3 translation);
