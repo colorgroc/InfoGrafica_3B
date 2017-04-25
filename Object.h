@@ -26,7 +26,7 @@ public:
 
 private:
 	GLuint VBO, VAO, EBO;
-	mat4 model;
+//	mat4 model;
 	vec3 position;
 	vec3 scale;
 	vec3 rotation;

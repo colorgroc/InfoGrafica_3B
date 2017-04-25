@@ -19,6 +19,7 @@
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
 #include "Shader.hh"
+#include "Camera.h"
 #include "Object.h"
 using namespace glm;
 using namespace std;
@@ -61,11 +62,12 @@ int main()
 
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
+	Camera *camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
 
 
 	glfwSetKeyCallback(window, key_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetCursorPosCallback(window, camara->MouseMove);
+	//glfwSetScrollCallback(window, *camara->MouseScroll);
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//glewExperimental = GL_TRUE;
@@ -83,7 +85,6 @@ int main()
 
 	Shader ourShader("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
 	Object *objeto = new Object(vec3(1.0f), vec3(1.0,0.0,0.0), vec3(1.0), Object::cube);
-
 
 /*	GLfloat VertexBufferCube[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -201,7 +202,7 @@ int main()
 	{
 	
 		glfwPollEvents();
-		DoMovment(window);
+		//DoMovment(window);
 		
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -221,7 +222,7 @@ int main()
 		}*/
 
 		//CAMARA
-		vec3 posCam = vec3(0.0f, 0.0f, 3.0f);
+		/*vec3 posCam = vec3(0.0f, 0.0f, 3.0f);
 		vec3 cambioCam = vec3(0.0, 0.0, 0.0);
 		vec3 camDir = normalize(posCam - cambioCam);//para hacer que la camara apunte hacia la z positiva y no negativa que es como inizia
 
@@ -240,8 +241,8 @@ int main()
 		GLfloat Z = cos(glfwGetTime()) * radio;
 		glm::mat4 view;
 
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);*/
+		camara->DoMovement(window);
 		mat4 projection;
 		projection = glm::perspective(fov, (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
@@ -249,7 +250,7 @@ int main()
 		GLint viewLoc = glGetUniformLocation(ourShader.Program, "view");
 		GLint projLoc = glGetUniformLocation(ourShader.Program, "projection");
 
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(camara->LookAt()));
 	
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 		//SHADER
@@ -321,7 +322,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-void DoMovment(GLFWwindow* window) { //MOVER CAMARA
+/*void DoMovment(GLFWwindow* window) { //MOVER CAMARA
 	GLint a = glfwGetKey(window, GLFW_KEY_A);
 	GLint w = glfwGetKey(window, GLFW_KEY_W);
 	GLint s = glfwGetKey(window, GLFW_KEY_S);
@@ -380,4 +381,4 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	front.y = sin(glm::radians(pitchh));
 	front.z = sin(glm::radians(yaww)) * cos(glm::radians(pitchh));
 	cameraFront = glm::normalize(front);
-}
+}*/

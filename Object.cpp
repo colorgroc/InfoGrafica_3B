@@ -77,23 +77,23 @@ void Object::Draw() {
 }
 void Object::Move(vec3 translation) {
 	//mat4 model;
-	model = translate(model, translation);
+	//model = translate(model, translation);
 }
 void Object::Rotate(vec3 rota) {
 	//mat4 model;
-	model = rotate(model, (GLfloat)glfwGetTime()*1.f, rota);
+	//model = rotate(model, (GLfloat)glfwGetTime()*1.f, rota);
 }
 void Object::Scale(vec3 scal) {
 	//mat4 model;
-	model = glm::scale(model, scal);
+	//model = glm::scale(model, scal);
 }
 
 mat4 Object::GetModelMatrix() {
 	//Scale(scale);
 	//Rotate(rotation);
 	//Move(position);
-	//mat4 ONLY_MODEL;
-	return model;
+	mat4 ONLY_MODEL;
+	return ONLY_MODEL;
 }
 
 vec3 Object::GetPosition() {
