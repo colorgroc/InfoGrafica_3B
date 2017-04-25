@@ -76,23 +76,30 @@ void Object::Draw() {
 	glBindVertexArray(0);
 }
 void Object::Move(vec3 translation) {
-
+	//mat4 model;
+	model = translate(model, translation);
 }
 void Object::Rotate(vec3 rota) {
-
+	//mat4 model;
+	model = rotate(model, (GLfloat)glfwGetTime()*1.f, rota);
 }
 void Object::Scale(vec3 scal) {
-
+	//mat4 model;
+	model = glm::scale(model, scal);
 }
 
 mat4 Object::GetModelMatrix() {
-	mat4 ONLY_MODEL;
-	return ONLY_MODEL;
+	//Scale(scale);
+	//Rotate(rotation);
+	//Move(position);
+	//mat4 ONLY_MODEL;
+	return model;
 }
 
-/*vec3 Object::GetPosition() {
-	return 0;
-}*/
+vec3 Object::GetPosition() {
+	vec3 ONLY_MODEL;
+	return ONLY_MODEL;
+}
 
 void Object::Delete() {
 

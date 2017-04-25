@@ -52,7 +52,7 @@ GLfloat fov = 45.0f;
 int main()
 {
 	glfwInit();
-	// Set all the required options for GLFW
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -82,7 +82,7 @@ int main()
 
 
 	Shader ourShader("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
-	Object *objeto = new Object(vec3(1.0f), vec3(1.0f), vec3(1.0), Object::cube);
+	Object *objeto = new Object(vec3(1.0f), vec3(1.0,0.0,0.0), vec3(1.0), Object::cube);
 
 
 /*	GLfloat VertexBufferCube[] = {
@@ -201,7 +201,7 @@ int main()
 	{
 	
 		glfwPollEvents();
-		//DoMovment(window);
+		DoMovment(window);
 		
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -252,15 +252,15 @@ int main()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 	
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
+		//SHADER
 		ourShader.Use();
+		//CUBO
 		mat4 model = objeto->GetModelMatrix();
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 		objeto->Draw();
+		/*glBindVertexArray(VAO);
 
-
-		//glBindVertexArray(VAO);
-
-	/*	for (GLuint i = 0; i < 10; i++)//MOVER LOS CUBOS
+		for (GLuint i = 0; i < 10; i++)//MOVER LOS CUBOS
 		{
 	
 			glm::mat4 model;
@@ -283,8 +283,8 @@ int main()
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}*/
-		//glBindVertexArray(0);
+		}
+		glBindVertexArray(0);*/
 
 		glfwSwapBuffers(window);
 	}
@@ -381,6 +381,3 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	front.z = sin(glm::radians(yaww)) * cos(glm::radians(pitchh));
 	cameraFront = glm::normalize(front);
 }
-//void glfwSetInputMode(GLFWwindow* window, int mode, int value) {
-
-//}
