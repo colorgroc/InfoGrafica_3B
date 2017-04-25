@@ -68,7 +68,7 @@ int main()
 	glfwSetScrollCallback(window, scroll_callback);
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glewExperimental = GL_TRUE;
+	//glewExperimental = GL_TRUE;
 
 	glewInit();
 
@@ -76,16 +76,16 @@ int main()
 	glViewport(0, 0, WIDTH, HEIGHT);
 
 	// Setup OpenGL options
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 
 
 
 
 	Shader ourShader("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
+	Object *objeto = new Object(vec3(1.0f), vec3(1.0f), vec3(1.0), Object::cube);
 
 
-
-	GLfloat VertexBufferCube[] = {
+/*	GLfloat VertexBufferCube[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 		0.5f , -0.5f, -0.5f,  1.0f, 0.0f,
 		0.5f ,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -193,7 +193,7 @@ int main()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, image2);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image2);
-	glBindTexture(GL_TEXTURE_2D, 0); 
+	glBindTexture(GL_TEXTURE_2D, 0); */
 
 
 	// Game loop
@@ -201,7 +201,7 @@ int main()
 	{
 	
 		glfwPollEvents();
-		DoMovment(window);
+		//DoMovment(window);
 		
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -209,7 +209,7 @@ int main()
 
 
 
-		if (textura == true) {
+	/*	if (textura == true) {
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture);
 			glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
@@ -218,9 +218,8 @@ int main()
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture2);
 			glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
-		}
+		}*/
 
-		ourShader.Use();
 		//CAMARA
 		vec3 posCam = vec3(0.0f, 0.0f, 3.0f);
 		vec3 cambioCam = vec3(0.0, 0.0, 0.0);
@@ -253,6 +252,10 @@ int main()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 	
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
+		ourShader.Use();
+		mat4 model = objeto->GetModelMatrix();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+		objeto->Draw();
 
 
 		//glBindVertexArray(VAO);
@@ -286,8 +289,8 @@ int main()
 		glfwSwapBuffers(window);
 	}
 
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
+//	glDeleteVertexArrays(1, &VAO);
+	//glDeleteBuffers(1, &VBO);
 
 	glfwTerminate();
 	return 0;
