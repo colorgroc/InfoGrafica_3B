@@ -1,9 +1,9 @@
 #include "Object.h"
 
-Object::Object(vec3 scale, vec3 rotation, vec3 position, FigureType typef)   {
-	this->scale = scale;
+Object::Object(vec3 scale, vec3 rotation, vec3 position, FigureType typef) : scale(scale), rotation(rotation), position(position)  {
+	/*this->scale = scale;
 	this->rotation = rotation;
-	this->position = position;
+	this->position = position;*/
 	if (typef == cube) {
 		GLfloat VertexBufferObject[] = {
 			//front
@@ -76,29 +76,28 @@ void Object::Draw() {
 	glBindVertexArray(0);
 }
 void Object::Move(vec3 translation) {
-	//mat4 model;
-	//model = translate(model, translation);
+	this->position = translation;
 }
 void Object::Rotate(vec3 rota) {
-	//mat4 model;
-	//model = rotate(model, (GLfloat)glfwGetTime()*1.f, rota);
+	this->rotation = rota;
 }
 void Object::Scale(vec3 scal) {
-	//mat4 model;
-	//model = glm::scale(model, scal);
+	this->scale = scal;
 }
 
 mat4 Object::GetModelMatrix() {
-	//Scale(scale);
-	//Rotate(rotation);
-	//Move(position);
-	mat4 ONLY_MODEL;
-	return ONLY_MODEL;
+	glBindVertexArray(VAO);
+	mat4 model;
+	model = translate(model, position);
+	model = rotate(model, radians(rotation.x), vec3(0.0, 1.0, 0.0));
+	model = rotate(model, radians(rotation.y), vec3(0.1, 0.0, 1.0));
+	model = glm::scale(model, scale);
+
+	return model;
 }
 
 vec3 Object::GetPosition() {
-	vec3 ONLY_MODEL;
-	return ONLY_MODEL;
+	return position;
 }
 
 void Object::Delete() {

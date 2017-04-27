@@ -29,6 +29,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void DoMovment(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+Object *objeto;
+Object *objeto2; 
 
 const GLuint WIDTH = 800, HEIGHT = 800;
 bool textura = false;
@@ -42,7 +44,7 @@ vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 bool der;
 bool arriba;
 bool firstMouse = true;
-
+Camera *camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
 GLfloat camSpeed;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
@@ -50,6 +52,9 @@ GLfloat lastX =  WIDTH  / 2.0;
 GLfloat lastY =  HEIGHT / 2.0;
 GLfloat yaww = -90.0f, pitchh = 0.0f;
 GLfloat fov = 45.0f;
+
+vec3 rotacion;
+vec3 mov;
 int main()
 {
 	glfwInit();
@@ -62,13 +67,13 @@ int main()
 
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
-	Camera *camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
-
+	
+	
 
 	glfwSetKeyCallback(window, key_callback);
-	glfwSetCursorPosCallback(window, camara->MouseMove);
-	//glfwSetScrollCallback(window, *camara->MouseScroll);
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+	
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//glewExperimental = GL_TRUE;
 
@@ -84,7 +89,10 @@ int main()
 
 
 	Shader ourShader("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
-	Object *objeto = new Object(vec3(1.0f), vec3(1.0,0.0,0.0), vec3(1.0), Object::cube);
+	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
+
+	objeto = new Object(vec3(0.1f), vec3(1.2f, 1.0f, 2.0f), vec3(1.0), Object::cube);
+	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(0.5), Object::cube);
 
 /*	GLfloat VertexBufferCube[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -202,10 +210,10 @@ int main()
 	{
 	
 		glfwPollEvents();
-		//DoMovment(window);
+		DoMovment(window);
 		
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -222,7 +230,7 @@ int main()
 		}*/
 
 		//CAMARA
-		/*vec3 posCam = vec3(0.0f, 0.0f, 3.0f);
+		vec3 posCam = vec3(0.0f, 0.0f, 3.0f);
 		vec3 cambioCam = vec3(0.0, 0.0, 0.0);
 		vec3 camDir = normalize(posCam - cambioCam);//para hacer que la camara apunte hacia la z positiva y no negativa que es como inizia
 
@@ -236,13 +244,14 @@ int main()
 		lastFrame = currTime;
 		camSpeed = 3.f * deltaTime;
 
-		GLfloat radio = 8.0f;
-		GLfloat X = sin(glfwGetTime()) * radio;
-		GLfloat Z = cos(glfwGetTime()) * radio;
 		glm::mat4 view;
 
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);*/
-		camara->DoMovement(window);
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		
+		//camara->DoMovement(window);
+		
+		
+		ourShader.Use();
 		mat4 projection;
 		projection = glm::perspective(fov, (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
@@ -250,15 +259,38 @@ int main()
 		GLint viewLoc = glGetUniformLocation(ourShader.Program, "view");
 		GLint projLoc = glGetUniformLocation(ourShader.Program, "projection");
 
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(camara->LookAt()));
-	
+		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(camara->LookAt()));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
-		//SHADER
-		ourShader.Use();
-		//CUBO
+
+		GLint objectColorLoc = glGetUniformLocation(ourShader.Program, "objectColor");
+		GLint lightColorLoc = glGetUniformLocation(ourShader.Program, "lightColor");
+		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
+		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // Also set light's color (white)
+		mat4 model2 = objeto2->GetModelMatrix();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model2));
+		objeto2->Draw();
+
+		shaderLight.Use();
+		 projection;
+		projection = glm::perspective(fov, (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+
+		 modelLoc = glGetUniformLocation(shaderLight.Program, "model");
+		 viewLoc = glGetUniformLocation(shaderLight.Program, "view");
+		 projLoc = glGetUniformLocation(shaderLight.Program, "projection");
+
+		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(camara->LookAt()));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
+
+		objeto->Rotate(rotacion);
+		objeto->Move(mov);
+		
 		mat4 model = objeto->GetModelMatrix();
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 		objeto->Draw();
+
+		
 		/*glBindVertexArray(VAO);
 
 		for (GLuint i = 0; i < 10; i++)//MOVER LOS CUBOS
@@ -305,30 +337,44 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
 		textura = true;
 	}
-	else if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_7 && action == GLFW_PRESS) {
 		textura = false;	
 	}
-	if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT) {
-		angulo += 1;
+	if (key == GLFW_KEY_KP_2 && action == GLFW_PRESS) {
+		rotacion -= vec3(0.0, 1.0, 0.0);
 	}
-	else if (key == GLFW_KEY_RIGHT && action == GLFW_REPEAT) {
-		angulo -= 1;
+	else if (key == GLFW_KEY_KP_4 && action == GLFW_PRESS) {
+		rotacion -= vec3(1.0, 0.0, 0.0);
 	}
-	else if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT) {
-		angulo1 -= 1;
+	else if (key == GLFW_KEY_KP_6 && action == GLFW_PRESS) {
+		rotacion += vec3(1.0, 0.0, 0.0);
 	}
-	else if (key == GLFW_KEY_UP && action == GLFW_REPEAT) {
-		angulo1 += 1;
+	else if (key == GLFW_KEY_KP_8 && action == GLFW_PRESS) {
+		rotacion += vec3(0.0, 1.0, 0.0);
+	}
+	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+		mov += vec3(0.0, 0.1, 0.0);
+	}
+	else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+		mov -= vec3(0.0, 0.1, 0.0);
+	}
+	else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+		mov -= vec3(0.1, 0.0, 0.0);
+	}
+	else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+		mov += vec3(0.1, 0.0, 0.0);
 	}
 }
 
-/*void DoMovment(GLFWwindow* window) { //MOVER CAMARA
+void DoMovment(GLFWwindow* window) { //MOVER CAMARA
 	GLint a = glfwGetKey(window, GLFW_KEY_A);
 	GLint w = glfwGetKey(window, GLFW_KEY_W);
 	GLint s = glfwGetKey(window, GLFW_KEY_S);
 	GLint d = glfwGetKey(window, GLFW_KEY_D);
+	
 	if (a == 1) {
 		cameraPos -= normalize(glm::cross(cameraFront, cameraUp)) * camSpeed;
+		//objeto->Rotate(vec3(0.0, 1.0, 0.0));
 	}
 	if (w == 1) {
 		cameraPos += camSpeed * cameraFront;
@@ -339,7 +385,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (d == 1) {
 		cameraPos += normalize(glm::cross(cameraFront, cameraUp)) * camSpeed;
 	}
-
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -350,6 +395,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 		fov = 1.0f;
 	if (fov >= 45.0f)
 		fov = 45.0f;
+	//camara->MouseScroll(window, xoffset, yoffset);
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
@@ -381,4 +427,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	front.y = sin(glm::radians(pitchh));
 	front.z = sin(glm::radians(yaww)) * cos(glm::radians(pitchh));
 	cameraFront = glm::normalize(front);
-}*/
+	
+	
+	//camara->MouseMove(window, xpos, ypos);
+}
