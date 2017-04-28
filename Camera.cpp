@@ -38,6 +38,7 @@ void Camera::DoMovement(GLFWwindow *window) {
 		cameraPos += normalize(glm::cross(cameraFront, cameraUp)) * speed;
 	}
 }
+
 void Camera::MouseMove(GLFWwindow *window, double xpos, double ypos) {
  	if (this->firstMouse) //GIRO DE LA CAMARA
 	{
@@ -112,3 +113,12 @@ mat4 Camera::LookAt() {
 GLfloat Camera::GetFOV() {
 	return FOV;
 }
+
+vec3 Camera::posicionCamara()
+{
+	return cameraPos;
+}
+void Camera::HolaQtal() {
+
+}
+

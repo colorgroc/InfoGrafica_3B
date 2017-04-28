@@ -7,7 +7,6 @@ using namespace glm;
 class Camera
 {
 public:
-	
 	Camera(vec3 position,vec3 direction, GLfloat sensitivity, GLfloat fov);
 	~Camera();
 	void DoMovement(GLFWwindow *window);
@@ -15,7 +14,9 @@ public:
 	void MouseScroll(GLFWwindow *window, double xScroll, double yScroll);
 	mat4 LookAt();
 	GLfloat GetFOV();
-	int hola;
+	vec3 posicionCamara();
+	void HolaQtal();
+
 private:
 	vec3 cameraFront;
 	vec3 cameraPos;

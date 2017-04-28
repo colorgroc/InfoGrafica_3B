@@ -52,6 +52,7 @@ GLfloat lastX =  WIDTH  / 2.0;
 GLfloat lastY =  HEIGHT / 2.0;
 GLfloat yaww = -90.0f, pitchh = 0.0f;
 GLfloat fov = 45.0f;
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 vec3 rotacion;
 vec3 mov;
@@ -91,8 +92,8 @@ int main()
 	Shader ourShader("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
 	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
 
-	objeto = new Object(vec3(0.1f), vec3(1.2f, 1.0f, 2.0f), vec3(1.0), Object::cube);
-	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(0.5), Object::cube);
+	objeto = new Object(vec3(0.1f), vec3(0.0, 0.0, 0.0), vec3(1.2f, 1.0f, 2.0f), Object::cube);
+	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(1.2f, 1.0f, 1.5f), Object::cube);
 	camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
 
 /*	GLfloat VertexBufferCube[] = {
@@ -247,9 +248,21 @@ int main()
 
 		
 		ourShader.Use();
+	
+
+		GLint objectColorLoc = glGetUniformLocation(ourShader.Program, "objectColor");
+		GLint lightColorLoc = glGetUniformLocation(ourShader.Program, "lightColor");
+		GLint lightPosLoc = glGetUniformLocation(ourShader.Program, "lightPos");
+		GLint viewPosLoc = glGetUniformLocation(ourShader.Program, "viewPos");
+		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
+		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // Also set light's color (white)
+		glUniform3f(viewPosLoc, 0.0, 0.0, 0.0);
 		glm::mat4 view;
 
 		view = camara->LookAt();
+		objeto2->Rotate(rotacion);
+		objeto2->Move(mov);
 		mat4 projection;
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
@@ -260,14 +273,10 @@ int main()
 		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(camara->LookAt()));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
-
-		GLint objectColorLoc = glGetUniformLocation(ourShader.Program, "objectColor");
-		GLint lightColorLoc = glGetUniformLocation(ourShader.Program, "lightColor");
-		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // Also set light's color (white)
 		mat4 model2 = objeto2->GetModelMatrix();
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model2));
 		objeto2->Draw();
+
 
 		shaderLight.Use();
 	
@@ -277,15 +286,17 @@ int main()
 		 viewLoc = glGetUniformLocation(shaderLight.Program, "view");
 		 projLoc = glGetUniformLocation(shaderLight.Program, "projection");
 
+		// model = glm::mat4();
+		
 		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(camara->LookAt()));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
-		objeto->Rotate(rotacion);
-		objeto->Move(mov);
-		
+	
 		mat4 model = objeto->GetModelMatrix();
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+		model = glm::translate(model, lightPos);
+		//model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		objeto->Draw();
 
 		
