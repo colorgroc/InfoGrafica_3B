@@ -3,12 +3,16 @@ Camera::Camera(vec3 position, vec3 direction, GLfloat sensitivity, GLfloat fov) 
 	cameraPos(position), Sensivility(sensitivity), FOV(fov) {
 	
 	DeltaTime = 0.0f;
+	Lastframe = 0.0f;
+	YAW = -90;
+	PITCH = 0;
+	firstMouse = true;
+	LastMy = 400;
+	LastMx = 400;
 
-	//this->FOV = fov;
-
-	cameraFront = vec3(0.0, 0.0, -1.0);
-	vec3 camDir = normalize(cameraPos - direction);
-	cameraX = cross( camDir,vec3(0.0, 1.0, 0.0));
+	//cameraFront = vec3(0.0, 0.0, -1.0);
+	cameraFront = normalize(cameraPos - direction);
+	cameraX = cross(cameraFront,vec3(0.0, 1.0, 0.0));
 	cameraUp = cross(cameraX, cameraFront);
 }
 void Camera::DoMovement(GLFWwindow *window) {
@@ -54,8 +58,15 @@ void Camera::MouseMove(GLFWwindow *window, double xpos, double ypos) {
 
 	YAW += xoffset;
 	PITCH += yoffset;
-	PITCH = clamp(PITCH, -89.f, 89.f);
-	YAW = mod(YAW, 360.f);
+	if (PITCH > 89.0f)
+		PITCH = 89.0f;
+	if (PITCH < -89.0f)
+		PITCH = -89.f;
+
+	/*PITCH = clamp(PITCH, -89.f, 89.f);
+	YAW = mod(YAW, 360.f);*/
+
+
 
 
 	glm::vec3 front;
@@ -66,7 +77,7 @@ void Camera::MouseMove(GLFWwindow *window, double xpos, double ypos) {
 	
 }
 void Camera::MouseScroll(GLFWwindow *window, double xScroll, double yScroll) {
-	if (this->FOV >= 1.0f && this->FOV <= 45.0f)
+	if (FOV >= 1.0f && this->FOV <= 45.0f)
 		this->FOV -= yScroll;
 	if (this->FOV <= 1.0f)
 		this->FOV = 1.0f;
@@ -74,20 +85,30 @@ void Camera::MouseScroll(GLFWwindow *window, double xScroll, double yScroll) {
 		this->FOV = 45.0f;
 }
 mat4 Camera::LookAt() {
-	/*mat4 primera = mat4(cameraX.x, cameraX.y, cameraX.z, 0,
-				    cameraUp.x, cameraUp.y, cameraUp.z, 0,
-					cameraFront.x, cameraFront.y, cameraFront.z, 0,
-					0, 0, 0, 1);
+	/*mat4 primera;
+	primera[0][0] = cameraX.x;
+	primera[0][1] = cameraX.y;
+	primera[0][2] = cameraX.z;
 
-	mat4 segunda = mat4(1, 0, 0, -cameraPos.x,
-						0, 1, 0, -cameraPos.y,
-						0, 0, 1, -cameraPos.z,
-						0, 0, 0, 1);
+	primera[1][0] = cameraUp.x;
+	primera[1][1] = cameraUp.y;
+	primera[1][2] = cameraUp.z;
+
+	primera[2][0] = cameraFront.x;
+	primera[2][1] = cameraFront.y;
+	primera[2][2] = cameraFront.z;
+
+
+	mat4 segunda;
+	segunda[0][3] = -cameraPos.x;
+	segunda[1][3] = -cameraPos.y;
+	segunda[2][3] = -cameraPos.z;
+
 	mat4 total = primera * segunda;*/
 	//glm::lookAt(this->cameraPos, this->cameraPos + this->cameraFront, this->cameraUp);
 
-	return glm::lookAt(this->cameraPos, this->cameraPos + this->cameraFront, this->cameraUp);;
+	return glm::lookAt(this->cameraPos, this->cameraPos + this->cameraFront, this->cameraUp);
 }
 GLfloat Camera::GetFOV() {
-	return 45.f;
+	return FOV;
 }
