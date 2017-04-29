@@ -25,6 +25,8 @@ void Camera::DoMovement(GLFWwindow *window) {
 	GLint w = glfwGetKey(window, GLFW_KEY_W);
 	GLint s = glfwGetKey(window, GLFW_KEY_S);
 	GLint d = glfwGetKey(window, GLFW_KEY_D);
+	GLint q = glfwGetKey(window, GLFW_KEY_Q);
+	GLint e = glfwGetKey(window, GLFW_KEY_E);
 	if (a == 1) {
 		cameraPos -= normalize(glm::cross(cameraFront, cameraUp)) * speed;
 	}
@@ -36,6 +38,12 @@ void Camera::DoMovement(GLFWwindow *window) {
 	}
 	if (d == 1) {
 		cameraPos += normalize(glm::cross(cameraFront, cameraUp)) * speed;
+	}
+	if (q == 1) {
+		cameraPos -= speed * cameraUp;
+	}
+	if (e == 1) {
+		cameraPos += speed * cameraUp;
 	}
 }
 
@@ -63,12 +71,6 @@ void Camera::MouseMove(GLFWwindow *window, double xpos, double ypos) {
 		PITCH = 89.0f;
 	if (PITCH < -89.0f)
 		PITCH = -89.f;
-
-	/*PITCH = clamp(PITCH, -89.f, 89.f);
-	YAW = mod(YAW, 360.f);*/
-
-
-
 
 	glm::vec3 front;
 	front.x = cos(glm::radians(YAW)) * cos(glm::radians(PITCH));
@@ -118,7 +120,5 @@ vec3 Camera::posicionCamara()
 {
 	return cameraPos;
 }
-void Camera::HolaQtal() {
 
-}
 

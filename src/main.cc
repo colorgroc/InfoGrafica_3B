@@ -52,7 +52,7 @@ GLfloat lastX =  WIDTH  / 2.0;
 GLfloat lastY =  HEIGHT / 2.0;
 GLfloat yaww = -90.0f, pitchh = 0.0f;
 GLfloat fov = 45.0f;
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos(1.0f, 1.0f, 1.0f);
 
 vec3 rotacion;
 vec3 mov;
@@ -92,8 +92,8 @@ int main()
 	Shader ourShader("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
 	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
 
-	objeto = new Object(vec3(0.1f), vec3(0.0, 0.0, 0.0), vec3(1.2f, 1.0f, 2.0f), Object::cube);
-	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(1.2f, 1.0f, 1.5f), Object::cube);
+	objeto = new Object(vec3(0.1f), vec3(1.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), Object::cube);//lampara
+	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(0.5f, 1.0f, 1.0f), Object::cube);//cubo grande
 	camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
 
 /*	GLfloat VertexBufferCube[] = {
@@ -231,38 +231,22 @@ int main()
 			glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
 		}*/
 
-		//CAMARA
-		/*vec3 posCam = vec3(0.0f, 0.0f, 3.0f);
-		vec3 cambioCam = vec3(0.0, 0.0, 0.0);
-		vec3 camDir = normalize(posCam - cambioCam);//para hacer que la camara apunte hacia la z positiva y no negativa que es como inizia
-
-		vec3 upp = vec3(0.0, 1.0, 0.0);
-		vec3 camX = cross(camDir, upp); //se hace e producto vectorial de un vector hacia arriba y el vector de la z para q de un vector positivo en eje x
-
-		vec3 camY = cross(camX, camDir); // camY, camX  y camDir son los tres vectores ue necesitamos para crear nuestra camara
-
-		GLfloat currTime = glfwGetTime();//DELTA TIME
-		deltaTime = currTime - lastFrame;
-		lastFrame = currTime;
-		camSpeed = 3.f * deltaTime;*/
-
-		
 		ourShader.Use();
-	
 
 		GLint objectColorLoc = glGetUniformLocation(ourShader.Program, "objectColor");
 		GLint lightColorLoc = glGetUniformLocation(ourShader.Program, "lightColor");
 		GLint lightPosLoc = glGetUniformLocation(ourShader.Program, "lightPos");
-		GLint viewPosLoc = glGetUniformLocation(ourShader.Program, "viewPos");
+		//GLint viewPosLoc = glGetUniformLocation(ourShader.Program, "viewPos");
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // Also set light's color (white)
-		glUniform3f(viewPosLoc, 0.0, 0.0, 0.0);
+		glUniform3f(lightColorLoc, 1.0f, 1.0f, 0.0f); 
+		//glUniform3f(viewPosLoc, 0.0, 0.0, 0.0);
 		glm::mat4 view;
 
 		view = camara->LookAt();
 		objeto2->Rotate(rotacion);
 		objeto2->Move(mov);
+		
 		mat4 projection;
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
@@ -270,36 +254,27 @@ int main()
 		GLint viewLoc = glGetUniformLocation(ourShader.Program, "view");
 		GLint projLoc = glGetUniformLocation(ourShader.Program, "projection");
 
-		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(camara->LookAt()));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 		mat4 model2 = objeto2->GetModelMatrix();
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model2));
 		objeto2->Draw();
 
-
 		shaderLight.Use();
-	
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
 		 modelLoc = glGetUniformLocation(shaderLight.Program, "model");
 		 viewLoc = glGetUniformLocation(shaderLight.Program, "view");
 		 projLoc = glGetUniformLocation(shaderLight.Program, "projection");
 
-		// model = glm::mat4();
-		
-		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(camara->LookAt()));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
-	
 		mat4 model = objeto->GetModelMatrix();
-		model = glm::translate(model, lightPos);
-		//model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
+		//model = glm::translate(model, lightPos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		objeto->Draw();
-
-		
+	
 		/*glBindVertexArray(VAO);
 
 		for (GLuint i = 0; i < 10; i++)//MOVER LOS CUBOS
@@ -330,11 +305,8 @@ int main()
 
 		glfwSwapBuffers(window);
 	}
-
-//	glDeleteVertexArrays(1, &VAO);
-	//glDeleteBuffers(1, &VBO);
-
 	glfwTerminate();
+
 	return 0;
 }
 
@@ -349,29 +321,29 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	else if (key == GLFW_KEY_7 && action == GLFW_PRESS) {
 		textura = false;	
 	}
-	if (key == GLFW_KEY_KP_2 && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_KP_2 && action == GLFW_REPEAT) {
 		rotacion -= vec3(0.0, 1.0, 0.0);
 	}
-	else if (key == GLFW_KEY_KP_4 && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_KP_4 && action == GLFW_REPEAT) {
 		rotacion -= vec3(1.0, 0.0, 0.0);
 	}
-	else if (key == GLFW_KEY_KP_6 && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_KP_6 && action == GLFW_REPEAT) {
 		rotacion += vec3(1.0, 0.0, 0.0);
 	}
-	else if (key == GLFW_KEY_KP_8 && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_KP_8 && action == GLFW_REPEAT) {
 		rotacion += vec3(0.0, 1.0, 0.0);
 	}
-	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_UP && action == GLFW_REPEAT) {
 		mov += vec3(0.0, 0.1, 0.0);
 	}
-	else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT) {
 		mov -= vec3(0.0, 0.1, 0.0);
 	}
-	else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-		mov -= vec3(0.1, 0.0, 0.0);
-	}
-	else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_RIGHT && action == GLFW_REPEAT) {
 		mov += vec3(0.1, 0.0, 0.0);
+	}
+	else if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT) {
+		mov -= vec3(0.1, 0.0, 0.0);
 	}
 }
 

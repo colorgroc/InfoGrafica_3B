@@ -66,7 +66,7 @@ Object::Object(vec3 scale, vec3 rotation, vec3 position, FigureType typef) : sca
 		//glBindVertexArray(0);
 
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)3);
-		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(1);	
 		glBindVertexArray(0);
 	}
 }
@@ -78,6 +78,7 @@ void Object::Draw() {
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
+
 }
 void Object::Move(vec3 translation) {
 	this->position = translation;
