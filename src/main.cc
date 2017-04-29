@@ -67,36 +67,27 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	
-
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 	
-	
-
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 	
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	//glewExperimental = GL_TRUE;
 
 	glewInit();
 
-	// Define the viewport dimensions
 	glViewport(0, 0, WIDTH, HEIGHT);
 
-	// Setup OpenGL options
 	glEnable(GL_DEPTH_TEST);
 
-
-
-	
 	Shader ourShader("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
 	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
 	Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
 	Model modelo("./src/spider/spider.obj");
 	
-	objeto = new Object(vec3(0.1f), vec3(1.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), Object::cube);//lampara
+	objeto = new Object(vec3(0.1f), vec3(1.0f, 1.0f, 1.0f), vec3(lightPos.x, lightPos.y, lightPos.z), Object::cube);//lampara
 	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(0.5f, 1.0f, 1.0f), Object::cube);//cubo grande
 	camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
 
@@ -221,32 +212,19 @@ int main()
 
 		glClearColor(0.0f, 0.f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-
-	/*	if (textura == true) {
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
-		}
-		else if (textura == false) {
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture2);
-			glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
-		}*/
-
+		
+		//CUBO GRANDE
 		ourShader.Use();
-
+		vec3 posicion = camara->posicionCamara();
 		GLint objectColorLoc = glGetUniformLocation(ourShader.Program, "objectColor");
 		GLint lightColorLoc = glGetUniformLocation(ourShader.Program, "lightColor");
 		GLint lightPosLoc = glGetUniformLocation(ourShader.Program, "lightPos");
-		//GLint viewPosLoc = glGetUniformLocation(ourShader.Program, "viewPos");
+		GLint viewPosLoc = glGetUniformLocation(ourShader.Program, "viewPos");
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
 		glUniform3f(lightColorLoc, 1.0f, 1.0f, 0.0f); 
-		//glUniform3f(viewPosLoc, 0.0, 0.0, 0.0);
+		glUniform3f(viewPosLoc, posicion.x,posicion.y, posicion.z);
 		glm::mat4 view;
-
 		view = camara->LookAt();
 		objeto2->Rotate(rotacion);
 		objeto2->Move(mov);
@@ -264,6 +242,7 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model2));
 		objeto2->Draw();
 
+		//CUBO PEQUEÑO, LAMPARA
 		shaderLight.Use();
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
@@ -275,18 +254,17 @@ int main()
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
 		mat4 model = objeto->GetModelMatrix();
-		//model = glm::translate(model, lightPos);
+		model = glm::translate(model, lightPos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		objeto->Draw();
 
+		// CARGAR MODELO 3D
 		modelShader.Use();
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 		view = camara->LookAt();
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-		// Draw the loaded model
-		//glm::mat4 model;
 		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
 		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// It's a bit too big for our scene, so scale it down
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -339,16 +317,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		textura = false;	
 	}
 	if (key == GLFW_KEY_KP_2 && action == GLFW_REPEAT) {
-		rotacion -= vec3(0.0, 1.0, 0.0);
-	}
-	else if (key == GLFW_KEY_KP_4 && action == GLFW_REPEAT) {
 		rotacion -= vec3(1.0, 0.0, 0.0);
 	}
+	else if (key == GLFW_KEY_KP_4 && action == GLFW_REPEAT) {
+		rotacion -= vec3(0.0, 1.0, 0.0);
+	}
 	else if (key == GLFW_KEY_KP_6 && action == GLFW_REPEAT) {
-		rotacion += vec3(1.0, 0.0, 0.0);
+		rotacion += vec3(0.0, 1.0, 0.0);
 	}
 	else if (key == GLFW_KEY_KP_8 && action == GLFW_REPEAT) {
-		rotacion += vec3(0.0, 1.0, 0.0);
+		rotacion += vec3(1.0, 0.0, 0.0);
 	}
 	if (key == GLFW_KEY_UP && action == GLFW_REPEAT) {
 		mov += vec3(0.0, 0.1, 0.0);

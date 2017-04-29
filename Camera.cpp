@@ -115,10 +115,9 @@ mat4 Camera::LookAt() {
 GLfloat Camera::GetFOV() {
 	return FOV;
 }
-
 vec3 Camera::posicionCamara()
 {
-	return cameraPos;
+	return this->cameraPos;
 }
 
 

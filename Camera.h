@@ -14,7 +14,7 @@ public:
 	mat4 LookAt();
 	GLfloat GetFOV();
 	vec3 posicionCamara();
-	
+
 
 private:
 	vec3 cameraFront;
