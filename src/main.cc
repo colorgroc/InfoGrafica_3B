@@ -21,6 +21,8 @@
 #include "Shader.hh"
 #include "Camera.h"
 #include "Object.h"
+#include "Model.h"
+#include "Mesh.h"
 using namespace glm;
 using namespace std;
 
@@ -88,10 +90,12 @@ int main()
 
 
 
-
+	
 	Shader ourShader("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
 	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
-
+	Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
+	Model modelo("./src/spider/spider.obj");
+	
 	objeto = new Object(vec3(0.1f), vec3(1.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), Object::cube);//lampara
 	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(0.5f, 1.0f, 1.0f), Object::cube);//cubo grande
 	camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
@@ -274,6 +278,19 @@ int main()
 		//model = glm::translate(model, lightPos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		objeto->Draw();
+
+		modelShader.Use();
+		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+		view = camara->LookAt();
+		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+
+		// Draw the loaded model
+		//glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// It's a bit too big for our scene, so scale it down
+		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		//modelo.Draw(modelShader);
 	
 		/*glBindVertexArray(VAO);
 
