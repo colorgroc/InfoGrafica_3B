@@ -33,6 +33,9 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="src\Shader.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\dirLight.fragmentshader" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3FC640D2-EFA2-403C-A406-DF29A85CFD5D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

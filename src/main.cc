@@ -26,7 +26,6 @@
 using namespace glm;
 using namespace std;
 
-
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void DoMovment(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -35,25 +34,9 @@ Object *objeto;
 Object *objeto2; 
 
 const GLuint WIDTH = 800, HEIGHT = 800;
-bool textura = false;
-bool up;
-bool derecha;
-float angulo;
-float angulo1;
-vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-bool der;
-bool arriba;
-bool firstMouse = true;
+
 Camera *camara;
-GLfloat camSpeed;
-GLfloat deltaTime = 0.0f;
-GLfloat lastFrame = 0.0f;
-GLfloat lastX =  WIDTH  / 2.0;
-GLfloat lastY =  HEIGHT / 2.0;
-GLfloat yaww = -90.0f, pitchh = 0.0f;
-GLfloat fov = 45.0f;
+
 glm::vec3 lightPos(1.0f, 1.0f, 1.0f);
 
 vec3 rotacion;
@@ -84,6 +67,8 @@ int main()
 
 	Shader ourShader("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
 	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
+	Shader dirLight("./src/dirLight.vertexshader", "./src/dirLight.fragmentshader");
+	Shader pointLight("./src/pointLight.vertexshader", "./src/pointLight.fragmentshader");
 	Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
 	Model modelo("./src/spider/spider.obj");
 	
@@ -214,7 +199,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		//CUBO GRANDE
-		ourShader.Use();
+		/*ourShader.Use();
 		vec3 posicion = camara->posicionCamara();
 		GLint objectColorLoc = glGetUniformLocation(ourShader.Program, "objectColor");
 		GLint lightColorLoc = glGetUniformLocation(ourShader.Program, "lightColor");
@@ -222,8 +207,32 @@ int main()
 		GLint viewPosLoc = glGetUniformLocation(ourShader.Program, "viewPos");
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-		glUniform3f(lightColorLoc, 1.0f, 1.0f, 0.0f); 
-		glUniform3f(viewPosLoc, posicion.x,posicion.y, posicion.z);
+		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); 
+		glUniform3f(viewPosLoc, posicion.x,posicion.y, posicion.z);*/
+		/*dirLight.Use();
+		vec3 posicion = camara->posicionCamara();
+		glUniform3f(glGetUniformLocation(dirLight.Program, "viewPos"), posicion.x, posicion.y, posicion.z);
+		glUniform3f(glGetUniformLocation(dirLight.Program, "lightColor"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(dirLight.Program, "objectColor"), 1.0f, 0.5f, 0.31f);
+		glUniform3f(glGetUniformLocation(dirLight.Program, "dirLight.direction"), 0.5f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(dirLight.Program, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
+		glUniform3f(glGetUniformLocation(dirLight.Program, "dirLight.specular"),0.5f, 0.5f, 0.5f);
+		glUniform3f(glGetUniformLocation(dirLight.Program, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
+		*/
+
+		pointLight.Use();
+		vec3 posicion = camara->posicionCamara();
+		glUniform3f(glGetUniformLocation(pointLight.Program, "viewPos"), posicion.x, posicion.y, posicion.z);
+		glUniform3f(glGetUniformLocation(pointLight.Program, "lightColor"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(pointLight.Program, "objectColor"), 1.0f, 0.5f, 0.31f);
+		glUniform3f(glGetUniformLocation(pointLight.Program, "pointLight.position"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(glGetUniformLocation(pointLight.Program, "pointLight.ambient"), 0.05f, 0.05f, 0.05f);
+		glUniform3f(glGetUniformLocation(pointLight.Program, "pointLight.specular"), 0.5f, 0.5f, 0.5f);
+		glUniform3f(glGetUniformLocation(pointLight.Program, "pointLight.diffuse"), 0.4f, 0.4f, 0.4f);
+		glUniform1f(glGetUniformLocation(pointLight.Program, "pointLight.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(pointLight.Program, "pointLight.linear"), 0.09f);
+		glUniform1f(glGetUniformLocation(pointLight.Program, "pointLight.quadratic"), 0.032f);
+		
 		glm::mat4 view;
 		view = camara->LookAt();
 		objeto2->Rotate(rotacion);
@@ -232,9 +241,9 @@ int main()
 		mat4 projection;
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
-		GLint modelLoc = glGetUniformLocation(ourShader.Program, "model");
-		GLint viewLoc = glGetUniformLocation(ourShader.Program, "view");
-		GLint projLoc = glGetUniformLocation(ourShader.Program, "projection");
+		GLint modelLoc = glGetUniformLocation(pointLight.Program, "model");
+		GLint viewLoc = glGetUniformLocation(pointLight.Program, "view");
+		GLint projLoc = glGetUniformLocation(pointLight.Program, "projection");
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
@@ -310,12 +319,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+/*	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
 		textura = true;
 	}
 	else if (key == GLFW_KEY_7 && action == GLFW_PRESS) {
 		textura = false;	
-	}
+	}*/
 	if (key == GLFW_KEY_KP_2 && action == GLFW_REPEAT) {
 		rotacion -= vec3(1.0, 0.0, 0.0);
 	}
@@ -343,7 +352,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void DoMovment(GLFWwindow* window) { //MOVER CAMARA
-	GLint a = glfwGetKey(window, GLFW_KEY_A);
+	/*GLint a = glfwGetKey(window, GLFW_KEY_A);
 	GLint w = glfwGetKey(window, GLFW_KEY_W);
 	GLint s = glfwGetKey(window, GLFW_KEY_S);
 	GLint d = glfwGetKey(window, GLFW_KEY_D);
@@ -360,7 +369,7 @@ void DoMovment(GLFWwindow* window) { //MOVER CAMARA
 	}
 	if (d == 1) {
 		cameraPos += normalize(glm::cross(cameraFront, cameraUp)) * camSpeed;
-	}
+	}*/
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
