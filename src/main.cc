@@ -194,7 +194,6 @@ int main()
 	{
 	
 		glfwPollEvents();
-		//DoMovment(window);
 		camara->DoMovement(window);
 
 		glClearColor(0.0f, 0.f, 0.0f, 1.0f);
@@ -235,7 +234,21 @@ int main()
 		glUniform1f(glGetUniformLocation(pointLight.Program, "quadratic"), 0.032f);*/
 		//luz focal
 		focalLight.Use();
-
+		vec3 posicion = camara->posicionCamara();
+		GLint objectColorLoc = glGetUniformLocation(focalLight.Program, "objectColor");
+		GLint lightColorLoc = glGetUniformLocation(focalLight.Program, "lightColor");
+		GLint lightPosLoc = glGetUniformLocation(focalLight.Program, "lightPos");
+		GLint viewPosLoc = glGetUniformLocation(focalLight.Program, "viewPos");
+		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
+		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+		glUniform3f(viewPosLoc, posicion.x, posicion.y, posicion.z);
+		glUniform1f(glGetUniformLocation(focalLight.Program, "constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(focalLight.Program, "linear"), 0.09f);
+		glUniform1f(glGetUniformLocation(focalLight.Program, "quadratic"), 0.032f);
+		glUniform3f(glGetUniformLocation(focalLight.Program, "focoDir"), 1.0f, 1.0f, -1.0f);
+		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMx"), radians(18.f));
+		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMn"), radians(12.f));
 
 		
 		glm::mat4 view;
@@ -246,9 +259,9 @@ int main()
 		mat4 projection;
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
-		GLint modelLoc = glGetUniformLocation(ambientLight.Program, "model");
-		GLint viewLoc = glGetUniformLocation(ambientLight.Program, "view");
-		GLint projLoc = glGetUniformLocation(ambientLight.Program, "projection");
+		GLint modelLoc = glGetUniformLocation(focalLight.Program, "model");
+		GLint viewLoc = glGetUniformLocation(focalLight.Program, "view");
+		GLint projLoc = glGetUniformLocation(focalLight.Program, "projection");
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
@@ -284,34 +297,6 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		//modelo.Draw(modelShader);
 	
-		/*glBindVertexArray(VAO);
-
-		for (GLuint i = 0; i < 10; i++)//MOVER LOS CUBOS
-		{
-	
-			glm::mat4 model;
-			model = translate(model, CubesPositionBuffer[i]);
-			GLfloat angle = 50.0f * i;
-			if (i != 0) {
-				model = rotate(model, (GLfloat)glfwGetTime()* 1.f, vec3(1.0f, 1.0f, 0.0f));
-			}
-			if (i == 0) {
-				if(up)
-					model = rotate(model, radians(angulo), vec3(0.0f, 1.0f, 0.0f));
-				else if(!up)
-					model = rotate(model, radians(angulo), vec3(0.0f, -1.0f, 0.0f));
-				if(derecha)
-					model = rotate(model, radians(angulo1), vec3(1.0f, 0.0f, 0.0f));
-				else if(!derecha)
-					model = rotate(model, radians(angulo1), vec3(-1.0f, 0.0f, 0.0f));
-
-			}
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		glBindVertexArray(0);*/
-
 		glfwSwapBuffers(window);
 	}
 	glfwTerminate();
