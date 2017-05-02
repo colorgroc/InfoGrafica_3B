@@ -19,7 +19,7 @@ void Camera::DoMovement(GLFWwindow *window) {
 	GLfloat currTime = glfwGetTime();
 	DeltaTime = currTime - Lastframe;
 	Lastframe = currTime;
-	GLfloat speed = 3.f * DeltaTime;
+	GLfloat speed = 1.f * DeltaTime;
 
 	GLint a = glfwGetKey(window, GLFW_KEY_A);
 	GLint w = glfwGetKey(window, GLFW_KEY_W);

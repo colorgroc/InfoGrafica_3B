@@ -5,10 +5,8 @@
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
-
 // GLFW
 #include <GLFW/glfw3.h>
-
 // Other Libs
 #include <SOIL.h>
 // GLM Mathematics
@@ -28,21 +26,22 @@ using namespace glm;
 using namespace std;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-void DoMovment(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 Object *objeto;
 Object *objeto2; 
 Material *material;
+Camera *camara;
 
 const GLuint WIDTH = 800, HEIGHT = 800;
 
-Camera *camara;
 
 glm::vec3 lightPos(0.f, 1.5f, 0.f);
 
 vec3 rotacion;
 vec3 mov;
+
+int dir;
 int main()
 {
 	glfwInit();
@@ -81,117 +80,7 @@ int main()
 	objeto = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(lightPos.x, lightPos.y, lightPos.z), Object::cube);//lampara
 	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(0.0f), Object::cube);//cubo grande
 	camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
-	material = new Material("./src/difuso.png", "./src/especular.png", 0.5);
-/*	GLfloat VertexBufferCube[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		0.5f , -0.5f, -0.5f,  1.0f, 0.0f,
-		0.5f ,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f ,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f , -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f ,  0.5f,  0.5f,  1.0f, 1.0f,
-		0.5f ,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		0.5f ,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f ,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f , -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f , -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f , -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f ,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f , -0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f , -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f , -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f ,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f ,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f ,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
-	vec3 CubesPositionBuffer[] = {
-		vec3(0.0f ,  0.0f,  0.0f),
-		vec3(2.0f ,  5.0f, -15.0f),
-		vec3(-1.5f, -2.2f, -2.5f),
-		vec3(-3.8f, -2.0f, -12.3f),
-		vec3(2.4f , -0.4f, -3.5f),
-		vec3(-1.7f,  3.0f, -7.5f),
-		vec3(1.3f , -2.0f, -2.5f),
-		vec3(1.5f ,  2.0f, -2.5f),
-		vec3(1.5f ,  0.2f, -1.5f),
-		vec3(-1.3f,  1.0f, -1.5f)
-	};
-	GLuint VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexBufferCube), VertexBufferCube, GL_STATIC_DRAW);
-
-	// Position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	// TexCoord attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-
-	glBindVertexArray(0); 
-
-
-	//TEXTURA
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	int width, height;
-	unsigned char* image = SOIL_load_image("./src/hola.png", &width, &height, 0, SOIL_LOAD_RGB);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(image);
-	glBindTexture(GL_TEXTURE_2D, 0); 
-
-	GLuint texture2;
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	int width2, height2;
-	unsigned char* image2 = SOIL_load_image("./src/texture.png", &width2, &height2, 0, SOIL_LOAD_RGB);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, image2);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(image2);
-	glBindTexture(GL_TEXTURE_2D, 0); */
-
+	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -217,12 +106,15 @@ int main()
 		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); 
 		glUniform3f(viewPosLoc, posicion.x,posicion.y, posicion.z);*/
 		//luz direccional
-		/*	dirLight.Use();
+		/*dirLight.Use();
+		material->ActivateTextures();
+		material->SetMaterial(&dirLight);
+		material->SetShininess(&dirLight);
 		vec3 posicion = camara->posicionCamara();
 		glUniform3f(glGetUniformLocation(dirLight.Program, "viewPos"), posicion.x, posicion.y, posicion.z);
 		glUniform3f(glGetUniformLocation(dirLight.Program, "lightColor"), 1.0f, 1.0f, 1.0f);
 		glUniform3f(glGetUniformLocation(dirLight.Program, "objectColor"), 1.0f, 0.5f, 0.31f);
-		glUniform3f(glGetUniformLocation(dirLight.Program, "lightdir"), 1.0f, 1.0f, -1.0f);*/
+		glUniform3f(glGetUniformLocation(dirLight.Program, "lightdir"), 0.0f, -1.0f, 0.0f);*/
 		//luz puntual
 		pointLight.Use();
 		material->ActivateTextures();
@@ -244,6 +136,9 @@ int main()
 	
 		//luz focal
 		/*focalLight.Use();
+		material->ActivateTextures();
+		material->SetMaterial(&focalLight);
+		material->SetShininess(&focalLight);
 		vec3 posicion = camara->posicionCamara();
 		GLint objectColorLoc = glGetUniformLocation(focalLight.Program, "objectColor");
 		GLint lightColorLoc = glGetUniformLocation(focalLight.Program, "lightColor");
@@ -259,13 +154,10 @@ int main()
 		glUniform3f(glGetUniformLocation(focalLight.Program, "focoDir"), 0.0f, -1.0f, 0.0f);
 		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMx"), cos(radians(18.f)));
 		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMn"), cos(radians(12.f)));*/
-		//textura
-		//shaderText.Use();
-	
-		
 		
 		glm::mat4 view;
 		view = camara->LookAt();
+	
 		objeto2->Rotate(rotacion);
 		objeto2->Move(mov);
 		
@@ -286,9 +178,9 @@ int main()
 		shaderLight.Use();
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
-		 modelLoc = glGetUniformLocation(shaderLight.Program, "model");
-		 viewLoc = glGetUniformLocation(shaderLight.Program, "view");
-		 projLoc = glGetUniformLocation(shaderLight.Program, "projection");
+		 modelLoc = glGetUniformLocation(focalLight.Program, "model");
+		 viewLoc = glGetUniformLocation(focalLight.Program, "view");
+		 projLoc = glGetUniformLocation(focalLight.Program, "projection");
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
@@ -320,14 +212,13 @@ int main()
 // Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
+	GLint a = glfwGetKey(window, GLFW_KEY_UP);
+	GLint b = glfwGetKey(window, GLFW_KEY_DOWN);
+	GLint c = glfwGetKey(window, GLFW_KEY_RIGHT);
+	GLint d = glfwGetKey(window, GLFW_KEY_LEFT);
+
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-/*	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-		textura = true;
-	}
-	else if (key == GLFW_KEY_7 && action == GLFW_PRESS) {
-		textura = false;	
-	}*/
 	if (key == GLFW_KEY_KP_2 && action == GLFW_REPEAT) {
 		rotacion -= vec3(1.0, 0.0, 0.0);
 	}
@@ -340,82 +231,30 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	else if (key == GLFW_KEY_KP_8 && action == GLFW_REPEAT) {
 		rotacion += vec3(1.0, 0.0, 0.0);
 	}
-	if (key == GLFW_KEY_UP && action == GLFW_REPEAT) {
-		mov += vec3(0.0, 0.1, 0.0);
-	}
-	else if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT) {
-		mov -= vec3(0.0, 0.1, 0.0);
-	}
-	else if (key == GLFW_KEY_RIGHT && action == GLFW_REPEAT) {
-		mov += vec3(0.1, 0.0, 0.0);
-	}
-	else if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT) {
-		mov -= vec3(0.1, 0.0, 0.0);
-	}
-}
-
-void DoMovment(GLFWwindow* window) { //MOVER CAMARA
-	/*GLint a = glfwGetKey(window, GLFW_KEY_A);
-	GLint w = glfwGetKey(window, GLFW_KEY_W);
-	GLint s = glfwGetKey(window, GLFW_KEY_S);
-	GLint d = glfwGetKey(window, GLFW_KEY_D);
-	
 	if (a == 1) {
-		cameraPos -= normalize(glm::cross(cameraFront, cameraUp)) * camSpeed;
-		//objeto->Rotate(vec3(0.0, 1.0, 0.0));
+		mov += vec3(0.0, 0.1, 0.0);
+		dir = 0;
 	}
-	if (w == 1) {
-		cameraPos += camSpeed * cameraFront;
+	else if (b == 1) {
+		mov -= vec3(0.0, 0.1, 0.0);
+		dir = 1;
 	}
-	if (s == 1) {
-		cameraPos -= camSpeed * cameraFront;
+	else if (c == 1) {
+		mov += vec3(0.1, 0.0, 0.0);
+		dir = 2;
 	}
-	if (d == 1) {
-		cameraPos += normalize(glm::cross(cameraFront, cameraUp)) * camSpeed;
-	}*/
+	else if (d == 1) {
+		mov -= vec3(0.1, 0.0, 0.0);
+		dir = 3;
+	}
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	/*if (fov >= 1.0f && fov <= 45.0f)
-		fov -= yoffset;
-	if (fov <= 1.0f)
-		fov = 1.0f;
-	if (fov >= 45.0f)
-		fov = 45.0f;*/
 	camara->MouseScroll(window, xoffset, yoffset);
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	/*if (firstMouse) //GIRO DE LA CAMARA
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	
-	GLfloat xoffset = xpos - lastX;
-	GLfloat yoffset = lastY - ypos; // Reversed since y-coordinates range from bottom to top
-	lastX = xpos;
-	lastY = ypos;
-
-	GLfloat sensitivity = 0.05f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaww += xoffset;
-	pitchh += yoffset;
-	pitchh = clamp(pitchh, -89.f, 89.f);
-	yaww = mod(yaww, 360.f);
-
-
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaww)) * cos(glm::radians(pitchh));
-	front.y = sin(glm::radians(pitchh));
-	front.z = sin(glm::radians(yaww)) * cos(glm::radians(pitchh));
-	cameraFront = glm::normalize(front);*/
-	
 	
 	camara->MouseMove(window, xpos, ypos);
 }
