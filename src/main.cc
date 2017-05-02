@@ -80,7 +80,7 @@ int main()
 	objeto = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(lightPos.x, lightPos.y, lightPos.z), Object::cube);//lampara
 	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(0.0f), Object::cube);//cubo grande
 	camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
-	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
+	material = new Material("./src/difuso.png", "./src/especular.png", 50.f);
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -216,36 +216,37 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	GLint b = glfwGetKey(window, GLFW_KEY_DOWN);
 	GLint c = glfwGetKey(window, GLFW_KEY_RIGHT);
 	GLint d = glfwGetKey(window, GLFW_KEY_LEFT);
+	GLint e = glfwGetKey(window, GLFW_KEY_KP_2);
+	GLint f = glfwGetKey(window, GLFW_KEY_KP_4);
+	GLint g = glfwGetKey(window, GLFW_KEY_KP_6);
+	GLint h = glfwGetKey(window, GLFW_KEY_KP_8);
+
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	if (key == GLFW_KEY_KP_2 && action == GLFW_REPEAT) {
+	if (e == 1) {
 		rotacion -= vec3(1.0, 0.0, 0.0);
 	}
-	else if (key == GLFW_KEY_KP_4 && action == GLFW_REPEAT) {
+	else if (f == 1) {
 		rotacion -= vec3(0.0, 1.0, 0.0);
 	}
-	else if (key == GLFW_KEY_KP_6 && action == GLFW_REPEAT) {
+	else if (g == 1) {
 		rotacion += vec3(0.0, 1.0, 0.0);
 	}
-	else if (key == GLFW_KEY_KP_8 && action == GLFW_REPEAT) {
+	else if (h == 1) {
 		rotacion += vec3(1.0, 0.0, 0.0);
 	}
 	if (a == 1) {
 		mov += vec3(0.0, 0.1, 0.0);
-		dir = 0;
 	}
 	else if (b == 1) {
 		mov -= vec3(0.0, 0.1, 0.0);
-		dir = 1;
 	}
 	else if (c == 1) {
 		mov += vec3(0.1, 0.0, 0.0);
-		dir = 2;
 	}
 	else if (d == 1) {
 		mov -= vec3(0.1, 0.0, 0.0);
-		dir = 3;
 	}
 }
 
