@@ -41,12 +41,11 @@ Material::~Material() {
 }
 
 void Material::SetMaterial(Shader *shad) {
-	glUniform1i(glGetUniformLocation(shad->Program, "material.texSpecular"), 1);
-	glUniform1i(glGetUniformLocation(shad->Program, "material.texDiffuse"), 0);
+	glUniform1i(glGetUniformLocation(shad->Program, "ourTexture1"), 0);
 }
 
 void Material::SetShininess(Shader *shad) {
-	glUniform1f(glGetUniformLocation(shad->Program, "metrial.shininess"), 200.f);
+	glUniform1i(glGetUniformLocation(shad->Program, "ourTexture2"), 1);
 }
 
 void Material::ActivateTextures() {

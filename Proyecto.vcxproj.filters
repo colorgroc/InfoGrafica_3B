@@ -57,4 +57,9 @@
       <Filter>Archivos de recursos</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\focalLight.fragmentshader">
+      <Filter>Archivos de recursos</Filter>
+    </None>
+  </ItemGroup>
 </Project>
