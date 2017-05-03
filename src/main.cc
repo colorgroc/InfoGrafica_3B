@@ -22,6 +22,7 @@
 #include "Model.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Light.h"
 using namespace glm;
 using namespace std;
 
@@ -33,15 +34,16 @@ Object *objeto2;
 Material *material;
 Camera *camara;
 
+
 const GLuint WIDTH = 800, HEIGHT = 800;
 
 
 glm::vec3 lightPos(0.f, 1.5f, 0.f);
+vec3 lightDir(0.0, -1.0, 0.0);
 
 vec3 rotacion;
 vec3 mov;
 
-int dir;
 int main()
 {
 	glfwInit();
@@ -71,16 +73,17 @@ int main()
 	Shader dirLight("./src/dirLight.vertexshader", "./src/dirLight.fragmentshader");
 	Shader pointLight("./src/pointLight.vertexshader", "./src/pointLight.fragmentshader");
 	Shader focalLight("./src/focalLight.vertexshader", "./src/focalLight.fragmentshader");
-
+	Shader shader("./src/vertex.vertexshader", "./src/fragment.fragmentshader");
+	
 	Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
 	Model modelo("./src/spider/spider.obj");
 
-	//Shader shaderText("./src/texture.vertexshader", "./src/texture.fragmentshader");
-	
+
 	objeto = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(lightPos.x, lightPos.y, lightPos.z), Object::cube);//lampara
 	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(0.0f), Object::cube);//cubo grande
 	camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
-	material = new Material("./src/difuso.png", "./src/especular.png", 50.f);
+	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
+	Light light(lightPos, lightDir, vec3(0.1f), vec3(1.0f), vec3(0.5f), vec3(0.5f), Light::DIRECTIONAL, 1);
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -132,10 +135,8 @@ int main()
 		glUniform1f(glGetUniformLocation(pointLight.Program, "constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(pointLight.Program, "linear"), 0.09f);
 		glUniform1f(glGetUniformLocation(pointLight.Program, "quadratic"), 0.032f);*/
-
-	
 		//luz focal
-		focalLight.Use();
+		/*	focalLight.Use();
 		material->ActivateTextures();
 		material->SetMaterial(&focalLight);
 		material->SetShininess(&focalLight);
@@ -152,9 +153,18 @@ int main()
 		glUniform1f(glGetUniformLocation(focalLight.Program, "linear"), 0.09f);
 		glUniform1f(glGetUniformLocation(focalLight.Program, "quadratic"), 0.032f);
 		glUniform3f(glGetUniformLocation(focalLight.Program, "lightDirection"), 0.0f, -1.0f, 0.0f);
-		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMx"), cos(radians(18.f)));
-		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMn"), cos(radians(12.f)));
+		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMx"), cos(radians(25.f)));
+		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMn"), cos(radians(12.f)));*/
 		
+		shader.Use();
+		//light.SetAtt()
+		material->ActivateTextures();
+		material->SetMaterial(&shader);
+		material->SetShininess(&shader);
+		vec3 posCam = camara->posicionCamara();
+		light.SetDirection(lightDir);
+		light.SetLight(&shader, posCam);
+
 		glm::mat4 view;
 		view = camara->LookAt();
 	
@@ -164,9 +174,9 @@ int main()
 		mat4 projection;
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
-		GLint modelLoc = glGetUniformLocation(focalLight.Program, "model");
-		GLint viewLoc = glGetUniformLocation(focalLight.Program, "view");
-		GLint projLoc = glGetUniformLocation(focalLight.Program, "projection");
+		GLint modelLoc = glGetUniformLocation(shader.Program, "model");
+		GLint viewLoc = glGetUniformLocation(shader.Program, "view");
+		GLint projLoc = glGetUniformLocation(shader.Program, "projection");
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));

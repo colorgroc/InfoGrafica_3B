@@ -46,7 +46,7 @@ void Material::SetMaterial(Shader *shad) {
 }
 
 void Material::SetShininess(Shader *shad) {
-	glUniform1f(glGetUniformLocation(shad->Program, "material.shininess"), 50.f);
+	glUniform1f(glGetUniformLocation(shad->Program, "material.shininess"), 200.f);
 }
 
 void Material::ActivateTextures() {

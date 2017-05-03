@@ -33,7 +33,7 @@ void main()
 
 	
 	
-	//if(Theta > Phi){
+	if(Theta > Phi){
 		// Ambient
 		float ambientStrength = 0.1f;
 		vec3 ambient = ambientStrength * lightColor* vec3(texture(material.texDiffuse, TexCoords));
@@ -57,12 +57,12 @@ void main()
 		
 		vec3 result = (Fatt*(ambient + diffuse + specular)) * cubeColor;
 		color = vec4(result, 1.0f);
-	//}
-	//else{
-	//	float ambientStrength = 0.1f;
-		//vec3 ambient = ambientStrength * lightColor;
-		//vec3 result = (Fatt*ambient) * cubeColor;
-		//color =  vec4(result, 1.0f);
+	}
+	else{
+		float ambientStrength = 0.1f;
+		vec3 ambient = ambientStrength * lightColor;
+		vec3 result = (Fatt*ambient) * cubeColor;
+		color =  vec4(result, 1.0f);
 		
-	//}
+	}
 }
