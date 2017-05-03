@@ -116,7 +116,7 @@ int main()
 		glUniform3f(glGetUniformLocation(dirLight.Program, "objectColor"), 1.0f, 0.5f, 0.31f);
 		glUniform3f(glGetUniformLocation(dirLight.Program, "lightdir"), 0.0f, -1.0f, 0.0f);*/
 		//luz puntual
-		pointLight.Use();
+		/*pointLight.Use();
 		material->ActivateTextures();
 		material->SetMaterial(&pointLight);
 		material->SetShininess(&pointLight);
@@ -131,29 +131,29 @@ int main()
 		glUniform3f(viewPosLoc, posicion.x, posicion.y, posicion.z);
 		glUniform1f(glGetUniformLocation(pointLight.Program, "constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(pointLight.Program, "linear"), 0.09f);
-		glUniform1f(glGetUniformLocation(pointLight.Program, "quadratic"), 0.032f);
+		glUniform1f(glGetUniformLocation(pointLight.Program, "quadratic"), 0.032f);*/
 
 	
 		//luz focal
-		/*focalLight.Use();
+		focalLight.Use();
 		material->ActivateTextures();
 		material->SetMaterial(&focalLight);
 		material->SetShininess(&focalLight);
 		vec3 posicion = camara->posicionCamara();
-		GLint objectColorLoc = glGetUniformLocation(focalLight.Program, "objectColor");
+		GLint objectColorLoc = glGetUniformLocation(focalLight.Program, "cubeColor");
 		GLint lightColorLoc = glGetUniformLocation(focalLight.Program, "lightColor");
 		GLint lightPosLoc = glGetUniformLocation(focalLight.Program, "lightPos");
 		GLint viewPosLoc = glGetUniformLocation(focalLight.Program, "viewPos");
-		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);	
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
 		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
 		glUniform3f(viewPosLoc, posicion.x, posicion.y, posicion.z);
 		glUniform1f(glGetUniformLocation(focalLight.Program, "constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(focalLight.Program, "linear"), 0.09f);
 		glUniform1f(glGetUniformLocation(focalLight.Program, "quadratic"), 0.032f);
-		glUniform3f(glGetUniformLocation(focalLight.Program, "focoDir"), 0.0f, -1.0f, 0.0f);
+		glUniform3f(glGetUniformLocation(focalLight.Program, "lightDirection"), 0.0f, -1.0f, 0.0f);
 		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMx"), cos(radians(18.f)));
-		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMn"), cos(radians(12.f)));*/
+		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMn"), cos(radians(12.f)));
 		
 		glm::mat4 view;
 		view = camara->LookAt();
@@ -164,9 +164,9 @@ int main()
 		mat4 projection;
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
-		GLint modelLoc = glGetUniformLocation(pointLight.Program, "model");
-		GLint viewLoc = glGetUniformLocation(pointLight.Program, "view");
-		GLint projLoc = glGetUniformLocation(pointLight.Program, "projection");
+		GLint modelLoc = glGetUniformLocation(focalLight.Program, "model");
+		GLint viewLoc = glGetUniformLocation(focalLight.Program, "view");
+		GLint projLoc = glGetUniformLocation(focalLight.Program, "projection");
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
@@ -178,9 +178,9 @@ int main()
 		shaderLight.Use();
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
-		 modelLoc = glGetUniformLocation(focalLight.Program, "model");
-		 viewLoc = glGetUniformLocation(focalLight.Program, "view");
-		 projLoc = glGetUniformLocation(focalLight.Program, "projection");
+		 modelLoc = glGetUniformLocation(shaderLight.Program, "model");
+		 viewLoc = glGetUniformLocation(shaderLight.Program, "view");
+		 projLoc = glGetUniformLocation(shaderLight.Program, "projection");
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
