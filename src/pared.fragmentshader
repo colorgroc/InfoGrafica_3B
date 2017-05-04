@@ -1,0 +1,19 @@
+#version 330 core
+
+struct Material{
+	sampler2D texSpecular;
+	sampler2D texDiffuse;
+	float shininess;
+};
+uniform Material material;
+
+out vec4 color;
+in vec2 TexCoords;
+
+
+void main()
+{
+	float ambientStrength = 0.5f;
+	vec3 ambient = ambientStrength *  vec3(texture(material.texDiffuse, TexCoords));
+    color = vec4(ambient, 1.0); // Set alle 4 vector values to 1.0f
+}
