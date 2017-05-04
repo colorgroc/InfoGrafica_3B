@@ -87,7 +87,7 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
-	Shader pared("./src/wall.vertexshader", "./src/pared.fragmentshader");
+	Shader pared("./src/dirLight.vertexshader", "./src/pared.fragmentshader");
 	/*Shader ambientLight("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
 	Shader dirLight("./src/dirLight.vertexshader", "./src/dirLight.fragmentshader");
 	Shader pointLight("./src/pointLight.vertexshader", "./src/pointLight.fragmentshader");
@@ -106,8 +106,8 @@ int main()
 	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
 	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);
 	cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
-	cuboGrande = new Object(vec3(10.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
-	camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
+	cuboGrande = new Object(vec3(5.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
+	camara = new Camera(vec3(0.0f, 0.0f, 1.0f), vec3(0.0), 0.05, 45.0);
 	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
 	Light directional(luz1, lightDir, vec3(0.2f), vec3(1.0f), vec3(0.5f), vec3(0.5f), Light::DIRECTIONAL, 1);
 	Light puntual(luz2, lightDir, vec3(0.2f), vec3(1.0f), vec3(0.5f), vec3(0.5f), Light::POINT, 1);
@@ -268,7 +268,7 @@ int main()
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 		mat4 modelpared = cuboGrande->GetModelMatrix();
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelpared));
-		//cuboGrande->Draw();
+		cuboGrande->Draw();
 
 
 		// CARGAR MODELO 3D
