@@ -29,21 +29,38 @@ using namespace std;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-Object *objeto;
-Object *objeto2; 
+Object *lampara1;
+Object *lampara2;
+Object *lampara3;
+Object *lampara4;
+Object *lampara5;
+Object *cubo1; 
 Material *material;
 Camera *camara;
 
 
 const GLuint WIDTH = 800, HEIGHT = 800;
 
+vec3 luz1(0.0, 0.0, 0.0);
+vec3 luz2(0.5, 0.0, 0.0);
+vec3 luz3(1.0, 0.0, 0.0);
+vec3 luz4(1.5, 0.0, 0.0);
+vec3 luz5(2.0, 0.0, 0.0);
+vec3 posicionCubo(0.0, -3.0, 0.0);
 
-glm::vec3 lightPos(0.f, 1.5f, 0.f);
+//glm::vec3 lightDirPos(0.f, 1.5f, 0.f);
 vec3 lightDir(0.0, -1.0, 0.0);
+
+//vec3 lightFocPos(0.f, 1.5f, 0.f);
+vec3 lightFocDir(0.0, -1.0, 0.0);
+
+//vec3 lightPointPos(1.f, 1.5f, 0.f);
 
 vec3 rotacion;
 vec3 mov;
-
+int m1 = 0;
+int m2 = 0;
+int m3 = 0;
 int main()
 {
 	glfwInit();
@@ -68,22 +85,31 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
-	Shader ambientLight("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
 	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
+	/*Shader ambientLight("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
 	Shader dirLight("./src/dirLight.vertexshader", "./src/dirLight.fragmentshader");
 	Shader pointLight("./src/pointLight.vertexshader", "./src/pointLight.fragmentshader");
-	Shader focalLight("./src/focalLight.vertexshader", "./src/focalLight.fragmentshader");
+	Shader focalLight("./src/focalLight.vertexshader", "./src/focalLight.fragmentshader");*/
 	Shader shader("./src/vertex.vertexshader", "./src/fragment.fragmentshader");
 	
 	Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
 	Model modelo("./src/spider/spider.obj");
+	Model modelo2("./src/spider/empty_mat.obj");
+	Model modelo3("./src/spider/WusonOBJ.obj");
 
 
-	objeto = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(lightPos.x, lightPos.y, lightPos.z), Object::cube);//lampara
-	objeto2 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), vec3(0.0f), Object::cube);//cubo grande
+	lampara1 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0), Object::cube);//lampara
+	lampara2 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz2.x, luz2.y, luz2.z), Object::cube);
+	lampara3 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz3.x, luz3.y, luz3.z), Object::cube);
+	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
+	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);
+	cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
 	camara = new Camera(vec3(0.0f, 0.0f, 3.0f), vec3(0.0), 0.05, 45.0);
 	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
-	Light light(lightPos, lightDir, vec3(0.1f), vec3(1.0f), vec3(0.5f), vec3(0.5f), Light::DIRECTIONAL, 1);
+	Light directional(luz1, lightDir, vec3(0.2f), vec3(1.0f), vec3(0.5f), vec3(0.5f), Light::DIRECTIONAL, 1);
+	Light puntual(luz2, lightDir, vec3(0.2f), vec3(1.0f), vec3(0.5f), vec3(0.5f), Light::POINT, 1);
+	Light focal(luz3, lightFocDir, vec3(0.2f), vec3(1.0f), vec3(0.5f), vec3(0.5f), Light::SPOT, 1);
+
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -162,14 +188,19 @@ int main()
 		material->SetMaterial(&shader);
 		material->SetShininess(&shader);
 		vec3 posCam = camara->posicionCamara();
-		light.SetDirection(lightDir);
-		light.SetLight(&shader, posCam);
+		//focal.SetAperture(12.f, 20.f);
+		//focal.SetAtt(1.0, 0.09, 0.032);
+		//focal.SetLight(&shader, posCam);
+		directional.SetDirection(lightDir);
+		directional.SetLight(&shader, posCam);
+		puntual.SetAtt(1.0f, 0.09f, 0.032f);
+		puntual.SetLight(&shader, posCam);
 
 		glm::mat4 view;
 		view = camara->LookAt();
 	
-		objeto2->Rotate(rotacion);
-		objeto2->Move(mov);
+		cubo1->Rotate(rotacion);
+		cubo1->Move(mov);
 		
 		mat4 projection;
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
@@ -180,9 +211,9 @@ int main()
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
-		mat4 model2 = objeto2->GetModelMatrix();
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model2));
-		objeto2->Draw();
+		mat4 model = cubo1->GetModelMatrix();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+		cubo1->Draw();
 
 		//CUBO PEQUEÑO, LAMPARA
 		shaderLight.Use();
@@ -195,10 +226,30 @@ int main()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
-		mat4 model = objeto->GetModelMatrix();
-		model = glm::translate(model, lightPos);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		objeto->Draw();
+		mat4 model1 = lampara1->GetModelMatrix();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model1));
+
+		lampara1->Draw();
+
+		mat4 model2 = lampara2->GetModelMatrix();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
+
+		lampara2->Draw();
+
+		mat4 model3 = lampara3->GetModelMatrix();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model3));
+
+		lampara3->Draw();
+
+		mat4 model4 = lampara4->GetModelMatrix();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model4));
+
+		lampara4->Draw();
+
+		mat4 model5 = lampara5->GetModelMatrix();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
+
+		lampara5->Draw();
 
 		// CARGAR MODELO 3D
 		modelShader.Use();
@@ -206,12 +257,19 @@ int main()
 		view = camara->LookAt();
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-
-		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// It's a bit too big for our scene, so scale it down
+		mat4 model6;
+		model6 = glm::translate(model6, glm::vec3(0.0f, -2.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
+		model6 = glm::scale(model6, glm::vec3(0.8f, 0.8f, 0.8f));	// It's a bit too big for our scene, so scale it down
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		//modelo.Draw(modelShader);
-	
+		if (m1 == 1) {
+			modelo.Draw(modelShader);
+		}
+		else if (m2 == 1) {
+			modelo2.Draw(modelShader);
+		}
+		else if (m3 == 1) {
+			modelo3.Draw(modelShader);
+		}
 		glfwSwapBuffers(window);
 	}
 	glfwTerminate();
@@ -230,7 +288,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	GLint f = glfwGetKey(window, GLFW_KEY_KP_4);
 	GLint g = glfwGetKey(window, GLFW_KEY_KP_6);
 	GLint h = glfwGetKey(window, GLFW_KEY_KP_8);
-
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
@@ -258,6 +315,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	else if (d == 1) {
 		mov -= vec3(0.1, 0.0, 0.0);
 	}
+	if (key == GLFW_KEY_I && action == GLFW_PRESS) {
+		m1 = 1;
+		m2 = 0;
+		m3 = 0;
+	}	
+	else if (key == GLFW_KEY_O && action == GLFW_PRESS) {
+		m2 = 1;
+		m1 = 0;
+		m3 = 0;
+	}	
+	else if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+		m3 = 1;
+		m1 = 0;
+		m2 = 0;
+	}
+		
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)

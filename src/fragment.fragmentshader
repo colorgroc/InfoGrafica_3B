@@ -1,6 +1,7 @@
 #version 330 core
 
-#define NR_POINT_LIGHTS 4
+#define NUM_MAX_PLIGHTS 4
+#define NUM_MAX_SLIGHTS 4
 
 struct Material{
 	sampler2D texSpecular;
@@ -36,7 +37,7 @@ struct FocalLight{
 	vec3 focAmbient;
 	//float numLight;
 };
-uniform FocalLight focalLight[NR_POINT_LIGHTS];
+//uniform FocalLight focalLight;
 
 struct PointLight{
 	//vec3 viewPos;
@@ -51,8 +52,11 @@ struct PointLight{
 	vec3 pointAmbient;
 	float numLight;
 };
-uniform PointLight pointLight[NR_POINT_LIGHTS];
+//uniform PointLight pointLight;
 
+
+uniform PointLight pointLight[NUM_MAX_PLIGHTS];
+uniform FocalLight focalLight[NUM_MAX_SLIGHTS];
 uniform vec3 viewPos;
 out vec4 color;
 in vec2 TexCoords;
@@ -60,9 +64,9 @@ in vec2 TexCoords;
 in vec3 FragPos;  
 in vec3 Normal;
 
-vec3 CalcDirLight(DirectionLight light, vec3 normal, vec3 viewPos);
-vec3 CalcFocLight(FocalLight light, vec3 normal, vec3 viewPos);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewPos);
+vec3 CalcDirLight(DirectionLight light, vec3 normal, vec3 puntodevista);
+vec3 CalcFocLight(FocalLight light, vec3 normal, vec3 puntodevista);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 puntodevista);
 
 
 
@@ -70,18 +74,23 @@ void main(){
 
     vec3 norm = normalize(Normal);
     vec3 viewdir = normalize(viewPos - FragPos);
+	vec3 res;
+	//for(int i = 0; i< NUM_MAX_PLIGHTS; i++){
+		//res += CalcPointLight(pointLight[i], norm, viewdir);
+	//}
 	
-	//vec3 luzPuntual = CalcPointLight(pointlight, norm, viewdir);
-	vec3 luzDireccional = CalcDirLight(directionLight, norm, viewdir);
+	res += CalcDirLight(directionLight, norm, viewdir);
 	
-	color = vec4(luzDireccional, 1.0);
-	//vec3 luzFocal = CalcFocLight(focalLight);
+	//for(int i = 0; i< NUM_MAX_SLIGHTS; i++){
+		//res += CalcFocLight(focalLight[i], norm, viewdir);
+	//}
 	
-	//var 
+	color = vec4(res, 1.0);
+
 
 }
 
-vec3 CalcDirLight(DirectionLight light, vec3 normal, vec3 viewPos){
+vec3 CalcDirLight(DirectionLight light, vec3 normal, vec3 puntodevista){
 	//float ambientStrength = 0.5f;
     vec3 ambient = light.dirAmbient * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
 	
@@ -89,18 +98,18 @@ vec3 CalcDirLight(DirectionLight light, vec3 normal, vec3 viewPos){
 	//vec3 norm = normalize(normal);
     vec3 lightDir = normalize(-light.lightdir);
 	float diff = max(dot(normal, lightDir), 0.0);
-	vec3 diffuse = light.dirDiffuse * diff * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
+	vec3 diffuse = light.dirDiffuse * diff * light.lightColor * light.objectColor;
 	
 	//float specStrng = 0.5f;
-	vec3 viewDir = normalize(viewPos - FragPos);
+	//vec3 viewDir = normalize(puntodevista - FragPos);
 	vec3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(max(dot(viewDir, reflectDir),0.0), material.shininess);
-	vec3 especular = light.dirSpec * spec * light.lightColor * vec3(texture(material.texSpecular, TexCoords));
-	vec3 res = vec3((ambient + especular + diffuse) * light.objectColor);
+	float spec = pow(max(dot(puntodevista, reflectDir),0.0), material.shininess);//problema con punto de vista
+	vec3 especular = light.dirSpec * spec * light.lightColor * light.objectColor;
+	vec3 res = vec3((especular + ambient + diffuse) * light.objectColor);
 	return res;
 }
 
-vec3 CalcFocLight(FocalLight light, vec3 normal, vec3 viewPos){
+vec3 CalcFocLight(FocalLight light, vec3 normal, vec3 puntodevista){
 	float Phi = cos(radians(light.aperturaMx)); //apertura del foco
 	vec3 lightDir = normalize(light.lightPos - FragPos);
 	float Theta = dot(lightDir,normalize(-light.lightdir));
@@ -121,9 +130,9 @@ vec3 CalcFocLight(FocalLight light, vec3 normal, vec3 viewPos){
     
 	// Specular
 	//float specularStrength = 0.5f;
-	vec3 viewDir = normalize(viewPos - FragPos);
+	vec3 viewDir = normalize(puntodevista - FragPos);
 	vec3 reflectDir = reflect(-lightDir, normal);  
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	float spec = pow(max(dot(puntodevista, reflectDir), 0.0), material.shininess);
 	vec3 specular = light.focSpec * spec * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
 		
 	diffuse *= Intensidad;
@@ -134,7 +143,7 @@ vec3 CalcFocLight(FocalLight light, vec3 normal, vec3 viewPos){
 	
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewPos){
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 puntodevista){
 	//float ambientStrength = 0.5f;
     vec3 ambient = light.pointAmbient * light.lightColor* vec3(texture(material.texDiffuse, TexCoords));
 	
@@ -145,9 +154,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewPos){
 	vec3 diffuse = light.pointDiffuse * diff * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
 	
 	//float specStrng = 0.7f;
-	vec3 viewDir = normalize(viewPos - FragPos);
+	//vec3 viewDir = normalize(puntodevista - FragPos);
 	vec3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(max(dot(viewDir, reflectDir),0.0), material.shininess);
+	float spec = pow(max(dot(puntodevista, reflectDir),0.0), material.shininess);
 	vec3 especular = light.pointSpec * spec * light.lightColor* vec3(texture(material.texSpecular, TexCoords));
 	
 	
