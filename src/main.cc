@@ -50,10 +50,10 @@ vec3 luz5(2.0, 0.0, 0.0);
 vec3 posicionCubo(0.0, -3.0, 0.0);
 
 //glm::vec3 lightDirPos(0.f, 1.5f, 0.f);
-vec3 lightDir(0.0, -1.0, 0.0);
+vec3 lightDir(1.0, 0.0, 0.0);
 
 //vec3 lightFocPos(0.f, 1.5f, 0.f);
-vec3 lightFocDir(0.0, -1.0, 0.0);
+vec3 lightFocDir(0.0, 1.0, 0.0);
 
 //vec3 lightPointPos(1.f, 1.5f, 0.f);
 
@@ -100,7 +100,7 @@ int main()
 	Model modelo3("./src/spider/WusonOBJ.obj");
 
 
-	lampara1 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0), Object::cube);//lampara
+	lampara1 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(-5.0, 0.0,0.0), Object::cube);//lampara
 	lampara2 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz2.x, luz2.y, luz2.z), Object::cube);
 	lampara3 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz3.x, luz3.y, luz3.z), Object::cube);
 	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
@@ -111,7 +111,7 @@ int main()
 	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
 	Light directional(luz1, lightDir, vec3(0.2f), vec3(1.0f), vec3(0.5f), vec3(0.5f), Light::DIRECTIONAL, 1);
 	Light puntual(luz2, lightDir, vec3(0.2f), vec3(1.0f), vec3(0.5f), vec3(0.5f), Light::POINT, 1);
-	Light focal(luz3, lightFocDir, vec3(0.2f), vec3(1.0f), vec3(0.5f), vec3(0.5f), Light::SPOT, 1);
+	Light focal(luz3, lightFocDir, vec3(0.5f), vec3(1.0f), vec3(1.0f), vec3(1.0f), Light::SPOT, 1);
 
 
 	// Game loop
@@ -191,13 +191,13 @@ int main()
 		material->SetMaterial(&shader);
 		material->SetShininess(&shader);
 		vec3 posCam = camara->posicionCamara();
-		//focal.SetAperture(12.f, 20.f);
-		//focal.SetAtt(1.0, 0.09, 0.032);
-		//focal.SetLight(&shader, posCam);
-		directional.SetDirection(lightDir);
-		directional.SetLight(&shader, posCam);
-		puntual.SetAtt(1.0f, 0.09f, 0.032f);
-		puntual.SetLight(&shader, posCam);
+		focal.SetAperture(12.f, 20.f);
+		focal.SetAtt(1.0, 0.09, 0.032);
+		focal.SetLight(&shader, posCam);
+		//directional.SetDirection(lightDir);
+		//directional.SetLight(&shader, posCam);
+		//puntual.SetAtt(1.0f, 0.09f, 0.032f);
+		//puntual.SetLight(&shader, posCam);
 
 		glm::mat4 view;
 		view = camara->LookAt();

@@ -64,105 +64,115 @@ in vec2 TexCoords;
 in vec3 FragPos;  
 in vec3 Normal;
 
-vec3 CalcDirLight(DirectionLight light, vec3 normal, vec3 puntodevista);
-vec3 CalcFocLight(FocalLight light, vec3 normal, vec3 puntodevista);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 puntodevista);
+vec3 CalcDirLight(DirectionLight light);
+vec3 CalcFocLight(FocalLight light);
+vec3 CalcPointLight(PointLight light);
 
 
 
 void main(){
 
-    vec3 norm = normalize(Normal);
-    vec3 viewdir = normalize(viewPos - FragPos);
+   // vec3 norm = normalize(Normal);
+    //vec3 viewdir = normalize(viewPos - FragPos);
 	vec3 res;
-	//for(int i = 0; i< NUM_MAX_PLIGHTS; i++){
-		//res += CalcPointLight(pointLight[i], norm, viewdir);
-	//}
+	res = CalcDirLight(directionLight);
 	
-	res += CalcDirLight(directionLight, norm, viewdir);
+	for(int i = 0; i< NUM_MAX_PLIGHTS; i++){
+		res += CalcPointLight(pointLight[i]);
+	}
 	
-	//for(int i = 0; i< NUM_MAX_SLIGHTS; i++){
-		//res += CalcFocLight(focalLight[i], norm, viewdir);
-	//}
+	
+	
+	for(int i = 0; i< NUM_MAX_SLIGHTS; i++){
+		res += CalcFocLight(focalLight[i]);
+	}
 	
 	color = vec4(res, 1.0);
 
 
 }
 
-vec3 CalcDirLight(DirectionLight light, vec3 normal, vec3 puntodevista){
+vec3 CalcDirLight(DirectionLight light){
 	//float ambientStrength = 0.5f;
     vec3 ambient = light.dirAmbient * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
 	
 	//float difStreng = 0.5f;
-	//vec3 norm = normalize(normal);
+	vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(-light.lightdir);
-	float diff = max(dot(normal, lightDir), 0.0);
-	vec3 diffuse = light.dirDiffuse * diff * light.lightColor * light.objectColor;
+	float diff = max(dot(norm, lightDir), 0.0);
+	vec3 diffuse = light.dirDiffuse * diff * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
 	
 	//float specStrng = 0.5f;
-	//vec3 viewDir = normalize(puntodevista - FragPos);
-	vec3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(max(dot(puntodevista, reflectDir),0.0), material.shininess);//problema con punto de vista
-	vec3 especular = light.dirSpec * spec * light.lightColor * light.objectColor;
-	vec3 res = vec3((especular + ambient + diffuse) * light.objectColor);
+	vec3 viewDir = normalize(viewPos - FragPos);
+	vec3 reflectDir = reflect(-lightDir, norm);
+	float spec = pow(max(dot(viewDir, reflectDir),0.0), material.shininess);
+	vec3 especular = light.dirSpec *spec * light.lightColor * vec3(texture(material.texSpecular, TexCoords));
+		
+	vec3 res = (ambient + especular + diffuse) * light.objectColor;
 	return res;
 }
 
-vec3 CalcFocLight(FocalLight light, vec3 normal, vec3 puntodevista){
+vec3 CalcFocLight(FocalLight light){
 	float Phi = cos(radians(light.aperturaMx)); //apertura del foco
 	vec3 lightDir = normalize(light.lightPos - FragPos);
 	float Theta = dot(lightDir,normalize(-light.lightdir));
 	float d = length(light.lightPos-FragPos);
-	float Fatt = 1/(light.c1+light.c2*d+light.c3*pow(d,2));
+	float Fatt = 1/(light.c1+(light.c2*d)+0.4*(d*d));
 	
 	float epsilon = cos(Phi)-cos(light.aperturaMn);
 	float Intensidad = clamp((Theta - Phi)/epsilon, 0,1);
 
-	// Ambient
-	//float ambientStrength = 0.1f;
-	vec3 ambient = light.focAmbient * light.lightColor* vec3(texture(material.texDiffuse, TexCoords));
+	
+		// Ambient
+		//float ambientStrength = 0.1f;
+		vec3 ambient = light.focAmbient * light.lightColor* vec3(texture(material.texDiffuse, TexCoords));
   	
-	// Diffuse 
-	//vec3 norm = normalize(Normal);		
-	float diff = max(dot(normal, lightDir), 0.0);	
-	vec3 diffuse = diff * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
+		// Diffuse 
+		vec3 norm = normalize(Normal);
+		
+		float diff = max(dot(norm, lightDir), 0.0);
+		
+		vec3 diffuse = light.focDiffuse * diff * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
     
-	// Specular
-	//float specularStrength = 0.5f;
-	vec3 viewDir = normalize(puntodevista - FragPos);
-	vec3 reflectDir = reflect(-lightDir, normal);  
-	float spec = pow(max(dot(puntodevista, reflectDir), 0.0), material.shininess);
-	vec3 specular = light.focSpec * spec * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
+		// Specular
+		//float specularStrength = 0.5f;
+		vec3 viewDir = normalize(viewPos - FragPos);
+		vec3 reflectDir = reflect(-lightDir, norm);  
+		float spec = pow(max(dot(viewDir, reflectDir), 0.0), 50);
+		vec3 specular = light.focSpec * spec * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
 		
-	diffuse *= Intensidad;
-	specular *= Intensidad;
+		diffuse *= Intensidad;
+		specular *= Intensidad;
 		
-	vec3 res = vec3((Fatt*(ambient + diffuse + specular)) * light.objectColor);
-	return res;
+		vec3 res = (Fatt*(ambient + diffuse + specular)) * light.objectColor;
+		return res;
+	
 	
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 puntodevista){
+vec3 CalcPointLight(PointLight light){
 	//float ambientStrength = 0.5f;
     vec3 ambient = light.pointAmbient * light.lightColor* vec3(texture(material.texDiffuse, TexCoords));
 	
 	//float difStreng = 0.5f;
-	//vec3 norm = normalize(Normal);
+	vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(light.lightPos - FragPos);
-	float diff = max(dot(normal, lightDir), 0.0);
+	
+	float diff = max(dot(norm, lightDir), 0.0);
 	vec3 diffuse = light.pointDiffuse * diff * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
 	
 	//float specStrng = 0.7f;
-	//vec3 viewDir = normalize(puntodevista - FragPos);
-	vec3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(max(dot(puntodevista, reflectDir),0.0), material.shininess);
+	vec3 viewDir = normalize(viewPos - FragPos);
+	vec3 reflectDir = reflect(-lightDir, norm);
+	float spec = pow(max(dot(viewDir, reflectDir),0.0), material.shininess);
 	vec3 especular = light.pointSpec * spec * light.lightColor* vec3(texture(material.texSpecular, TexCoords));
 	
 	
 	float d = length(light.lightPos - FragPos);
-	float attenuation = 1/(light.c1+light.c2*d+light.c3*pow(d,2));
-
-	vec3 res = vec3(attenuation * (ambient + diffuse + especular) * light.objectColor);
+    //float attenuation = 1.0f / (light.c1 + light.c2 * distance + light.c3 * (distance * distance)); 
+	 float attenuation = 1/(light.c1+(light.c2*d)+0.4*(d*d));
+	//vec3 res = especular + diffuse + ambient;
+	vec3 res = (attenuation * (ambient + diffuse + especular) * light.objectColor);
+	
 	return res;
 }

@@ -74,6 +74,9 @@ void Light::SetLight(Shader *shad, vec3 CamPos) {
 		glUniform1f(glGetUniformLocation(shad->Program, (variable + ".c1").c_str()), c1);
 		glUniform1f(glGetUniformLocation(shad->Program, (variable + ".c2").c_str()), c2);
 		glUniform1f(glGetUniformLocation(shad->Program, (variable + ".c3").c_str()), c3);
+		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".pointAmbient").c_str()), Lambient.x, Lambient.y, Lambient.z);
+		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".pointSpec").c_str()), Lspecular.x, Lspecular.y, Lspecular.z);
+		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".pointDiffuse").c_str()), Ldiffuse.x, Ldiffuse.y, Ldiffuse.z);
 		break;
 	case SPOT:
 		variable = "focalLight[" + std::to_string(lightNumber) + "]";
@@ -87,6 +90,9 @@ void Light::SetLight(Shader *shad, vec3 CamPos) {
 		glUniform1f(glGetUniformLocation(shad->Program, (variable + ".c3").c_str()), c3);
 		glUniform1f(glGetUniformLocation(shad->Program, (variable + ".aperturaMx").c_str()), MaxAperture);
 		glUniform1f(glGetUniformLocation(shad->Program, (variable + ".aperturaMn").c_str()), MinAperture);
+		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".focAmbient").c_str()), Lambient.x, Lambient.y, Lambient.z);
+		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".focSpec").c_str()), Lspecular.x, Lspecular.y, Lspecular.z);
+		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".focDiffuse").c_str()), Ldiffuse.x, Ldiffuse.y, Ldiffuse.z);
 
 		break;
 	default:
