@@ -120,7 +120,7 @@ vec3 CalcFocLight(FocalLight light){
 	float Fatt = 1/(light.c1+(light.c2*d)+0.032*(d*d));
 	
 	float epsilon = cos(Phi)-cos(light.aperturaMn);
-	float Intensidad = clamp((Theta - Phi)/epsilon, 0,1);
+	float Intensidad = clamp((Phi - Theta)/epsilon, 0,1);
 
 	
 		// Ambient

@@ -199,12 +199,12 @@ int main()
 		focal.SetAperture(12.f, 15.f);
 		focal.SetAtt(1.0, 0.09, 0.032);
 		focal.SetLight(&shader, posCam);
-	/*	directional.SetDirection(lightDir);
+		directional.SetDirection(lightDir);
 		directional.SetLight(&shader, posCam);
 		puntual.SetAtt(1.0f, 0.22f, 0.20f);
 		puntual.SetLight(&shader, posCam);
 		puntual2.SetAtt(1.0f, 0.22f, 0.20f);
-		puntual2.SetLight(&shader, posCam);*/
+		puntual2.SetLight(&shader, posCam);
 		focal2.SetAtt(1.0, 0.09, 0.032);
 		focal2.SetLight(&shader, posCam);
 		focal2.SetAperture(12.f, 15.f);
