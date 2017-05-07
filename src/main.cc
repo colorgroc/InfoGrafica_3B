@@ -43,20 +43,23 @@ Camera *camara;
 const GLuint WIDTH = 800, HEIGHT = 800;
 
 vec3 luz1(0.0, 0.0, 0.0);
-vec3 luz2(-2, 2, 0.0);
-vec3 luz3(-1, 0.0, 0.0);
-vec3 luz4(0, -1, -0.5);
-vec3 luz5(1, 0.0, 0);
+vec3 luz2(-2, 0.0, 0.0);
+vec3 luz3(-1, 0.7, 0.0);
+vec3 luz4(0, -0.4, 0.0);
+vec3 luz5(1, 0.7, 0);
 vec3 posicionCubo(0.0, -3.0, 0.0);
 
 //glm::vec3 lightDirPos(0.f, 1.5f, 0.f);
 vec3 lightDir(1.0, 0.0, 0.0);
 
 //vec3 lightFocPos(0.f, 1.5f, 0.f);
-vec3 lightFocDir(-1.0, 0.0, 0.0);
+vec3 lightFocDir(0.0, -1.0, 0.0);
 
-//vec3 lightPointPos(1.f, 1.5f, 0.f);
-
+vec3 color1(1.0);
+vec3 color2(1.0, 0.0, 0.0);
+vec3 color3(0.0, 1.0, 0.0);
+vec3 color4(0.0, 0.0, 1.0);
+vec3 color5(1.0, 1.0, 0.0);
 vec3 rotacion;
 vec3 mov;
 int m1 = 0;
@@ -106,14 +109,14 @@ int main()
 	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
 	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);
 	cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
-	cuboGrande = new Object(vec3(7.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
+	cuboGrande = new Object(vec3(5.f, 2.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
 	camara = new Camera(vec3(0.0f, 0.0f, 1.0f), vec3(0.0), 0.05, 45.0);
 	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
-	Light directional(luz1, lightDir, vec3(0.2f), vec3(1.0f), vec3(2.0f), vec3(2.0f), Light::DIRECTIONAL, 1);
-	Light puntual(luz2, lightDir, vec3(0.2f), vec3(1.0,0.0,1.0), vec3(2.0), vec3(2.0), Light::POINT, 0);
-	Light puntual2(luz4, lightDir, vec3(0.2f), vec3(0.0,1.0,0.0), vec3(1.5), vec3(1.5), Light::POINT, 1);
-	Light focal(luz3, lightFocDir, vec3(0.1f), vec3(0.0,1.0,1.0), vec3(1.0), vec3(1.0), Light::SPOT, 0);
-	Light focal2(luz5, lightFocDir, vec3(0.1f), vec3(1.0, 0.0,0.0f), vec3(1.0), vec3(1.0), Light::SPOT, 1);
+	Light directional(luz1, lightDir, vec3(0.2f), color1, vec3(0.3f), vec3(0.3f), Light::DIRECTIONAL, 1);
+	Light puntual(luz2, lightDir, vec3(0.2f), color2, vec3(1.0), vec3(1.0), Light::POINT, 0);
+	Light puntual2(luz4, lightDir, vec3(0.2f), color3, vec3(2.0), vec3(2.0), Light::POINT, 1);
+	Light focal(luz3, lightFocDir, vec3(0.2f), color4, vec3(5.0), vec3(5.0), Light::SPOT, 1);
+	Light focal2(luz5, lightFocDir, vec3(0.2f),color5, vec3(5.0), vec3(5.0), Light::SPOT, 0);
 
 
 	// Game loop
@@ -193,18 +196,18 @@ int main()
 		material->SetMaterial(&shader);
 		material->SetShininess(&shader);
 		vec3 posCam = camara->posicionCamara();
-		focal.SetAperture(cos(radians(12.f)), cos(radians(20.f)));
+		focal.SetAperture(12.f, 15.f);
 		focal.SetAtt(1.0, 0.09, 0.032);
 		focal.SetLight(&shader, posCam);
-		directional.SetDirection(lightDir);
+	/*	directional.SetDirection(lightDir);
 		directional.SetLight(&shader, posCam);
 		puntual.SetAtt(1.0f, 0.22f, 0.20f);
 		puntual.SetLight(&shader, posCam);
-		puntual2.SetAtt(1.0f, 0.007f, 0.0002f);
-		puntual2.SetLight(&shader, posCam);
+		puntual2.SetAtt(1.0f, 0.22f, 0.20f);
+		puntual2.SetLight(&shader, posCam);*/
 		focal2.SetAtt(1.0, 0.09, 0.032);
 		focal2.SetLight(&shader, posCam);
-		focal2.SetAperture(cos(radians(12.f)), cos(radians(20.f)));
+		focal2.SetAperture(12.f, 15.f);
 
 		glm::mat4 view;
 		view = camara->LookAt();
@@ -224,9 +227,7 @@ int main()
 		mat4 model = cubo1->GetModelMatrix();
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 		cubo1->Draw();
-		mat4 modelpared = cuboGrande->GetModelMatrix();
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelpared));
-		cuboGrande->Draw();
+
 
 		//CUBO PEQUEÑO, LAMPARA
 		shaderLight.Use();
@@ -240,36 +241,36 @@ int main()
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
 		mat4 model1 = lampara1->GetModelMatrix();
-		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), 1.0,0.0,0.2);
+		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color1.x,color1.y, color1.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model1));
 
 		lampara1->Draw();
 
 		mat4 model2 = lampara2->GetModelMatrix();
-		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), 0.0, 1.0, 0.2);
+		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color2.x, color2.y, color2.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
 
 		lampara2->Draw();
 
 		mat4 model3 = lampara3->GetModelMatrix();
-		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), 0.0, 0.0, 1.0);
+		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color3.x, color3.y, color3.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model3));
 
 		lampara3->Draw();
 
 		mat4 model4 = lampara4->GetModelMatrix();
-		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), 1.0, 1.0, 0.2);
+		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color4.x, color4.y, color4.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model4));
 
 		lampara4->Draw();
 
 		mat4 model5 = lampara5->GetModelMatrix();
-		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), 1.0, 0.0, 1.2);
+		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color5.x, color5.y, color5.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
 
 		lampara5->Draw();
 
-	/*	pared.Use();
+		pared.Use();
 		material->ActivateTextures();
 		material->SetMaterial(&pared);
 		material->SetShininess(&pared);
@@ -280,8 +281,10 @@ int main()
 		projLoc = glGetUniformLocation(shaderLight.Program, "projection");
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));*/
-
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
+		mat4 modelpared = cuboGrande->GetModelMatrix();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelpared));
+		cuboGrande->Draw();
 
 
 		// CARGAR MODELO 3D

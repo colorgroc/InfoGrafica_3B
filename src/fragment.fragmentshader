@@ -113,16 +113,16 @@ vec3 CalcDirLight(DirectionLight light){
 }
 
 vec3 CalcFocLight(FocalLight light){
-	float Phi = cos(radians(light.aperturaMn)); //apertura del foco
+	float Phi = cos(radians(light.aperturaMx)); //apertura del foco
 	vec3 lightDir = normalize(light.lightPos - FragPos);
 	float Theta = dot(lightDir,normalize(-light.lightdir));
 	float d = length(light.lightPos-FragPos);
-	float Fatt = 1/(light.c1+(light.c2*d)+0.4*(d*d));
+	float Fatt = 1/(light.c1+(light.c2*d)+0.032*(d*d));
 	
-	float epsilon = cos(Phi)-cos(light.aperturaMx);
+	float epsilon = cos(Phi)-cos(light.aperturaMn);
 	float Intensidad = clamp((Theta - Phi)/epsilon, 0,1);
 
-	if(Theta > Phi){
+	
 		// Ambient
 		//float ambientStrength = 0.1f;
 		vec3 ambient = light.focAmbient * light.lightColor* vec3(texture(material.texDiffuse, TexCoords));
@@ -139,18 +139,14 @@ vec3 CalcFocLight(FocalLight light){
 		vec3 viewDir = normalize(viewPos - FragPos);
 		vec3 reflectDir = reflect(-lightDir, norm);  
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-		vec3 specular = light.focSpec * spec * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
-		
+		vec3 specular = light.focSpec * spec * light.lightColor * vec3(texture(material.texSpecular, TexCoords));
+		//ambient *= Intensidad;
 		diffuse *= Intensidad;
 		specular *= Intensidad;
 		
 		vec3 res =(Fatt*(ambient + diffuse + specular)) * light.objectColor;
 		return res;
-		}
-		
 
-	
-	
 }
 
 vec3 CalcPointLight(PointLight light){
@@ -173,7 +169,7 @@ vec3 CalcPointLight(PointLight light){
 	
 	float d = length(light.lightPos - FragPos);
     //float attenuation = 1.0f / (light.c1 + light.c2 * distance + light.c3 * (distance * distance)); 
-	 float attenuation = 1/(light.c1+(light.c2*d)+1.8*(d*d));
+	 float attenuation = 1/(light.c1+(light.c2*d)+0.2*(d*d));
 	//vec3 res = especular + diffuse + ambient;
 	vec3 res = (attenuation * (ambient + diffuse + especular) * light.objectColor);
 	

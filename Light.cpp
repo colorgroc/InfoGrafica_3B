@@ -32,23 +32,17 @@ Light::Light(vec3 pos, vec3 dir, vec3 ambient, vec3 color, vec3 diffuse, vec3 sp
 
 
 void Light::SetAtt(float constant, float lineal, float quadratic) {
-	if (LightType == POINT) {
-		this->c1 = constant;
-		this->c2 = lineal;
-		this->c3 = quadratic;
-	}
-	else if (LightType == SPOT) {
-		this->c1 = constant;
-		this->c2 = lineal;
-		this->c3 = quadratic;
-	}
+	c1 = constant;
+	c2 = lineal;
+	c3 = quadratic;
 }
 
 void Light::SetAperture(float min, float max) {
-	if (LightType == DIRECTIONAL) {
+	if (LightType == SPOT) {
 		this->MaxAperture = max;
 		this->MinAperture = min;
 	}
+
 }
 
 void Light::SetLight(Shader *shad, vec3 CamPos) {
