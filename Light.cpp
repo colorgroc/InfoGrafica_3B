@@ -82,7 +82,7 @@ void Light::SetLight(Shader *shad, vec3 CamPos) {
 		variable = "focalLight[" + std::to_string(lightNumber) + "]";
 	//	glUniform3f(glGetUniformLocation(shad->Program, (variable + "viewPos").c_str()), CamPos.x, CamPos.y, CamPos.z);	
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".lightColor").c_str()), Color.x, Color.y, Color.z);
-		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".lightDir").c_str()), Ldirection.x, Ldirection.y, Ldirection.z);
+		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".lightdir").c_str()), Ldirection.x, Ldirection.y, Ldirection.z);
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".objectColor").c_str()), 1.0f, 0.5f, 0.31f);
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".lightPos").c_str()), Lpos.x, Lpos.y, Lpos.z);
 		glUniform1f(glGetUniformLocation(shad->Program, (variable + ".c1").c_str()), c1);

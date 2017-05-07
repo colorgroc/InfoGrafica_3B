@@ -138,13 +138,13 @@ vec3 CalcFocLight(FocalLight light){
 		//float specularStrength = 0.5f;
 		vec3 viewDir = normalize(viewPos - FragPos);
 		vec3 reflectDir = reflect(-lightDir, norm);  
-		float spec = pow(max(dot(viewDir, reflectDir), 0.0), 50);
+		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 		vec3 specular = light.focSpec * spec * light.lightColor * vec3(texture(material.texDiffuse, TexCoords));
 		
 		diffuse *= Intensidad;
 		specular *= Intensidad;
 		
-		vec3 res = (Fatt*(ambient + diffuse + specular)) * light.objectColor;
+		vec3 res =(Fatt*(ambient + diffuse + specular)) * light.objectColor;
 		return res;
 	
 	
@@ -170,7 +170,7 @@ vec3 CalcPointLight(PointLight light){
 	
 	float d = length(light.lightPos - FragPos);
     //float attenuation = 1.0f / (light.c1 + light.c2 * distance + light.c3 * (distance * distance)); 
-	 float attenuation = 1/(light.c1+(light.c2*d)+0.4*(d*d));
+	 float attenuation = 1/(light.c1+(light.c2*d)+1.8*(d*d));
 	//vec3 res = especular + diffuse + ambient;
 	vec3 res = (attenuation * (ambient + diffuse + especular) * light.objectColor);
 	
