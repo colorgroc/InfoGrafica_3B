@@ -113,16 +113,16 @@ vec3 CalcDirLight(DirectionLight light){
 }
 
 vec3 CalcFocLight(FocalLight light){
-	float Phi = cos(radians(light.aperturaMx)); //apertura del foco
+	float Phi = cos(radians(light.aperturaMn)); //apertura del foco
 	vec3 lightDir = normalize(light.lightPos - FragPos);
 	float Theta = dot(lightDir,normalize(-light.lightdir));
 	float d = length(light.lightPos-FragPos);
 	float Fatt = 1/(light.c1+(light.c2*d)+0.4*(d*d));
 	
-	float epsilon = cos(Phi)-cos(light.aperturaMn);
+	float epsilon = cos(Phi)-cos(light.aperturaMx);
 	float Intensidad = clamp((Theta - Phi)/epsilon, 0,1);
 
-	
+	if(Theta > Phi){
 		// Ambient
 		//float ambientStrength = 0.1f;
 		vec3 ambient = light.focAmbient * light.lightColor* vec3(texture(material.texDiffuse, TexCoords));
@@ -146,6 +146,9 @@ vec3 CalcFocLight(FocalLight light){
 		
 		vec3 res =(Fatt*(ambient + diffuse + specular)) * light.objectColor;
 		return res;
+		}
+		
+
 	
 	
 }
