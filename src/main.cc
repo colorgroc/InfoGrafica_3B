@@ -2,14 +2,14 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
-// GLEW
+
 #define GLEW_STATIC
 #include <GL/glew.h>
-// GLFW
+
 #include <GLFW/glfw3.h>
-// Other Libs
+
 #include <SOIL.h>
-// GLM Mathematics
+
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
@@ -29,6 +29,7 @@ using namespace std;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
 Object *lampara1;
 Object *lampara2;
 Object *lampara3;
@@ -49,17 +50,16 @@ vec3 luz4(0, -0.4, 0.0);
 vec3 luz5(1, 0.7, 0);
 vec3 posicionCubo(0.0, -3.0, 0.0);
 
-//glm::vec3 lightDirPos(0.f, 1.5f, 0.f);
-vec3 lightDir(1.0, 0.0, 0.0);
+vec3 lightDir(0.0, 0.0, -1.0);
 
-//vec3 lightFocPos(0.f, 1.5f, 0.f);
+
 vec3 lightFocDir(0.0, -1.0, 0.0);
 
 vec3 color1(1.0);
-vec3 color2(1.0, 0.0, 0.0);
+vec3 color2(1.0, 0.0, 1.0);
 vec3 color3(0.0, 1.0, 0.0);
 vec3 color4(1, 1, 1.0);
-vec3 color5(1.0, 1.0, 0.0);
+vec3 color5(0.0, 1.0, 1.0);
 vec3 rotacion;
 vec3 mov;
 int m1 = 0;
@@ -91,10 +91,6 @@ int main()
 
 	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
 	Shader pared("./src/dirLight.vertexshader", "./src/pared.fragmentshader");
-	/*Shader ambientLight("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
-	Shader dirLight("./src/dirLight.vertexshader", "./src/dirLight.fragmentshader");
-	Shader pointLight("./src/pointLight.vertexshader", "./src/pointLight.fragmentshader");
-	Shader focalLight("./src/focalLight.vertexshader", "./src/focalLight.fragmentshader");*/
 	Shader shader("./src/vertex.vertexshader", "./src/fragment.fragmentshader");
 	
 	Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
@@ -109,14 +105,14 @@ int main()
 	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
 	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);
 	cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
-	cuboGrande = new Object(vec3(5.f, 2.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
+	cuboGrande = new Object(vec3(5.f, 3.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
 	camara = new Camera(vec3(0.0f, 0.0f, 1.0f), vec3(0.0), 0.05, 45.0);
 	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
-	Light directional(luz1, lightDir, vec3(0.2f), color1, vec3(0.3f), vec3(0.3f), Light::DIRECTIONAL, 1);
+	Light directional(luz1, lightDir, vec3(0.2f), color1, vec3(1.f), vec3(1.f), Light::DIRECTIONAL, 1);
 	Light puntual(luz2, lightDir, vec3(0.2f), color2, vec3(1.0), vec3(1.0), Light::POINT, 0);
 	Light puntual2(luz4, lightDir, vec3(0.2f), color3, vec3(2.0), vec3(2.0), Light::POINT, 1);
-	Light focal(luz3, lightFocDir, vec3(0.2f), color4, vec3(8.0), vec3(8.0), Light::SPOT, 1);
-	Light focal2(luz5, lightFocDir, vec3(0.2f),color5, vec3(5.0), vec3(5.0), Light::SPOT, 0);
+	Light focal(luz3, lightFocDir, vec3(0.2f), color4, vec3(10.0), vec3(10.0), Light::SPOT, 1);
+	Light focal2(luz5, lightFocDir, vec3(0.2f),color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);
 
 
 	// Game loop
@@ -130,85 +126,28 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		
-		//CUBO GRANDE
-		//luz ambiental sola
-		/*ambientLight.Use();
-		vec3 posicion = camara->posicionCamara();
-		GLint objectColorLoc = glGetUniformLocation(ambientLight.Program, "objectColor");
-		GLint lightColorLoc = glGetUniformLocation(ambientLight.Program, "lightColor");
-		GLint lightPosLoc = glGetUniformLocation(ambientLight.Program, "lightPos");
-		GLint viewPosLoc = glGetUniformLocation(ambientLight.Program, "viewPos");
-		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
-		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); 
-		glUniform3f(viewPosLoc, posicion.x,posicion.y, posicion.z);*/
-		//luz direccional
-		/*dirLight.Use();
-		material->ActivateTextures();
-		material->SetMaterial(&dirLight);
-		material->SetShininess(&dirLight);
-		vec3 posicion = camara->posicionCamara();
-		glUniform3f(glGetUniformLocation(dirLight.Program, "viewPos"), posicion.x, posicion.y, posicion.z);
-		glUniform3f(glGetUniformLocation(dirLight.Program, "lightColor"), 1.0f, 1.0f, 1.0f);
-		glUniform3f(glGetUniformLocation(dirLight.Program, "objectColor"), 1.0f, 0.5f, 0.31f);
-		glUniform3f(glGetUniformLocation(dirLight.Program, "lightdir"), 0.0f, -1.0f, 0.0f);*/
-		//luz puntual
-		/*pointLight.Use();
-		material->ActivateTextures();
-		material->SetMaterial(&pointLight);
-		material->SetShininess(&pointLight);
-		vec3 posicion = camara->posicionCamara();
-		GLint objectColorLoc = glGetUniformLocation(pointLight.Program, "objectColor");
-		GLint lightColorLoc = glGetUniformLocation(pointLight.Program, "lightColor");
-		GLint lightPosLoc = glGetUniformLocation(pointLight.Program, "lightPos");
-		GLint viewPosLoc = glGetUniformLocation(pointLight.Program, "viewPos");
-		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
-		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
-		glUniform3f(viewPosLoc, posicion.x, posicion.y, posicion.z);
-		glUniform1f(glGetUniformLocation(pointLight.Program, "constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(pointLight.Program, "linear"), 0.09f);
-		glUniform1f(glGetUniformLocation(pointLight.Program, "quadratic"), 0.032f);*/
-		//luz focal
-		/*	focalLight.Use();
-		material->ActivateTextures();
-		material->SetMaterial(&focalLight);
-		material->SetShininess(&focalLight);
-		vec3 posicion = camara->posicionCamara();
-		GLint objectColorLoc = glGetUniformLocation(focalLight.Program, "cubeColor");
-		GLint lightColorLoc = glGetUniformLocation(focalLight.Program, "lightColor");
-		GLint lightPosLoc = glGetUniformLocation(focalLight.Program, "lightPos");
-		GLint viewPosLoc = glGetUniformLocation(focalLight.Program, "viewPos");
-		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);	
-		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
-		glUniform3f(viewPosLoc, posicion.x, posicion.y, posicion.z);
-		glUniform1f(glGetUniformLocation(focalLight.Program, "constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(focalLight.Program, "linear"), 0.09f);
-		glUniform1f(glGetUniformLocation(focalLight.Program, "quadratic"), 0.032f);
-		glUniform3f(glGetUniformLocation(focalLight.Program, "lightDirection"), 0.0f, -1.0f, 0.0f);
-		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMx"), cos(radians(25.f)));
-		glUniform1f(glGetUniformLocation(focalLight.Program, "aperturaMn"), cos(radians(12.f)));*/
-		
 		shader.Use();
-		//light.SetAtt()
 		material->ActivateTextures();
 		material->SetMaterial(&shader);
 		material->SetShininess(&shader);
 		vec3 posCam = camara->posicionCamara();
-		focal.SetAtt(1.0, 0.09, 0.032);
-		focal.SetLight(&shader, posCam);
-		focal.SetAperture(12.f, 15.f);
 		directional.SetDirection(lightDir);
 		directional.SetLight(&shader, posCam);
+
 		puntual.SetAtt(1.0f, 0.22f, 0.20f);
 		puntual.SetLight(&shader, posCam);
+
 		puntual2.SetAtt(1.0f, 0.22f, 0.20f);
 		puntual2.SetLight(&shader, posCam);
+
+		focal.SetAtt(1.0, 0.09, 0.032);
+		focal.SetLight(&shader, posCam);
+		focal.SetAperture(12.f, 20.f);
+
 		focal2.SetAtt(1.0, 0.09, 0.032);
 		focal2.SetLight(&shader, posCam);
-		focal2.SetAperture(12.f, 15.f);
-
+		focal2.SetAperture(12.f, 20.f);
+		
 		glm::mat4 view;
 		view = camara->LookAt();
 	
@@ -299,16 +238,23 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		mat4 model6;
-		model6 = glm::translate(model6, glm::vec3(0.0f, -2.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
-		model6 = glm::scale(model6, glm::vec3(0.8f, 0.8f, 0.8f));	// It's a bit too big for our scene, so scale it down
-		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		
 		if (m1 == 1) {
+			model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
+			model6 = glm::scale(model6, glm::vec3(0.005f, 0.005f,0.005f));
+			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
 			modelo.Draw(modelShader);
 		}
 		else if (m2 == 1) {
+			model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
+			model6 = glm::scale(model6, glm::vec3(0.09f, 0.09f, 0.09f));
+			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
 			modelo2.Draw(modelShader);
 		}
 		else if (m3 == 1) {
+			model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
+			model6 = glm::scale(model6, glm::vec3(0.1f, 0.1f, 0.1f));
+			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
 			modelo3.Draw(modelShader);
 		}
 		glfwSwapBuffers(window);

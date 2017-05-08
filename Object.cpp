@@ -56,7 +56,6 @@ Object::Object(vec3 scale, vec3 rotation, vec3 position, FigureType typef) : sca
 			glBindBuffer(GL_ARRAY_BUFFER, VBO);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(VertexBufferObject), VertexBufferObject, GL_STATIC_DRAW);
 
-			// Position attribute
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 			glEnableVertexAttribArray(0);
 
@@ -73,7 +72,7 @@ Object::Object(vec3 scale, vec3 rotation, vec3 position, FigureType typef) : sca
 Object::~Object() {}
 
 void Object::Draw() {
-	//glBindVertexArray(VAO);
+	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 

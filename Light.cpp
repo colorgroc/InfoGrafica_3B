@@ -11,7 +11,6 @@ Light::Light(vec3 pos, vec3 dir, vec3 ambient, vec3 color, vec3 diffuse, vec3 sp
 	case DIRECTIONAL:
 		this->Color = color;
 		this->Lpos = pos;
-
 		this->lightNumber = number;
 		break;
 	case POINT:
@@ -22,7 +21,6 @@ Light::Light(vec3 pos, vec3 dir, vec3 ambient, vec3 color, vec3 diffuse, vec3 sp
 	case SPOT:
 		this->Color = color;
 		this->Lpos = pos;
-	//	this->Ldirection = dir;
 		this->lightNumber = number;
 		break;
 	default:
@@ -47,11 +45,9 @@ void Light::SetAperture(float min, float max) {
 
 void Light::SetLight(Shader *shad, vec3 CamPos) {
 	std::string variable;
-	//vec3 color = this->GetColor();
 	glUniform3f(glGetUniformLocation(shad->Program, "viewPos"), CamPos.x, CamPos.y, CamPos.z);
 	switch (LightType) {
 	case DIRECTIONAL:	
-		//glUniform3f(glGetUniformLocation(shad->Program, "directionLight.viewPos"), CamPos.x, CamPos.y, CamPos.z);
 		glUniform3f(glGetUniformLocation(shad->Program, "directionLight.lightColor"), Color.x, Color.y, Color.z);
 		glUniform3f(glGetUniformLocation(shad->Program, "directionLight.lightdir"), Ldirection.x, Ldirection.y, Ldirection.z);
 		glUniform3f(glGetUniformLocation(shad->	Program,"directionLight.objectColor"), 1.0f, 0.5f, 0.31f);
@@ -61,7 +57,6 @@ void Light::SetLight(Shader *shad, vec3 CamPos) {
 		break;
 	case POINT:
 		variable = "pointLight[" + std::to_string(lightNumber) + "]";
-		//glUniform3f(glGetUniformLocation(shad->Program, (variable + "viewPos").c_str()), CamPos.x, CamPos.y, CamPos.z);
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".lightColor").c_str()), Color.x, Color.y, Color.z);
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".objectColor").c_str()), 1.0f, 0.5f, 0.31f);
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".lightPos").c_str()), Lpos.x, Lpos.y, Lpos.z);
@@ -74,7 +69,6 @@ void Light::SetLight(Shader *shad, vec3 CamPos) {
 		break;
 	case SPOT:
 		variable = "focalLight[" + std::to_string(lightNumber) + "]";
-	//	glUniform3f(glGetUniformLocation(shad->Program, (variable + "viewPos").c_str()), CamPos.x, CamPos.y, CamPos.z);	
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".lightColor").c_str()), Color.x, Color.y, Color.z);
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".lightdir").c_str()), Ldirection.x, Ldirection.y, Ldirection.z);
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".objectColor").c_str()), 1.0f, 0.5f, 0.31f);

@@ -10,7 +10,6 @@ Camera::Camera(vec3 position, vec3 direction, GLfloat sensitivity, GLfloat fov) 
 	LastMy = 400;
 	LastMx = 400;
 
-	//cameraFront = vec3(0.0, 0.0, -1.0);
 	cameraFront = normalize(cameraPos - direction);
 	cameraX = cross(cameraFront,vec3(0.0, 1.0, 0.0));
 	cameraUp = cross(cameraX, cameraFront);
@@ -48,7 +47,7 @@ void Camera::DoMovement(GLFWwindow *window) {
 }
 
 void Camera::MouseMove(GLFWwindow *window, double xpos, double ypos) {
- 	if (this->firstMouse) //GIRO DE LA CAMARA
+ 	if (this->firstMouse)
 	{
 		LastMx = xpos;
 		LastMy = ypos;
@@ -57,7 +56,7 @@ void Camera::MouseMove(GLFWwindow *window, double xpos, double ypos) {
 
 
 	GLfloat xoffset = xpos - LastMx;
-	GLfloat yoffset = LastMy - ypos; // Reversed since y-coordinates range from bottom to top
+	GLfloat yoffset = LastMy - ypos;
 	LastMx = xpos;
 	LastMy = ypos;
 
