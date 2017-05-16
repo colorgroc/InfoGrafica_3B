@@ -90,12 +90,12 @@ int main()
 
 	// Setup some OpenGL options
 	glEnable(GL_DEPTH_TEST);
-
+	//glDepthFunc(GL_ALWAYS);
 
 	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
 	Shader pared("./src/dirLight.vertexshader", "./src/pared.fragmentshader");
 	Shader shader("./src/vertex.vertexshader", "./src/fragment.fragmentshader");
-	Shader depth("./src/depthShader.vertexshader", "./src/depthShader.fragmentshader");
+//	Shader depth("./src/depthShader.vertexshader", "./src/depthShader.fragmentshader");
 	Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
 	Model modelo("./src/spider/spider.obj");
 	Model modelo2("./src/spider/empty_mat.obj");
@@ -117,29 +117,6 @@ int main()
 	Light focal(luz3, lightFocDir, vec3(0.2f), color4, vec3(10.0), vec3(10.0), Light::SPOT, 1);
 	Light focal2(luz5, lightFocDir, vec3(0.2f),color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);
 
-	//creamos el framebuffer que es el depth texture renderizado desde la luz y lo amlacenamos en una textura.
-	GLuint depthMapFB;
-	glGenFramebuffers(1, &depthMapFB);
-	//creamos una textura 2D que servira para almazenar el depth buffer(creamos el depth map)
-	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024; //resolucion del depth map
-	GLuint depthMap;
-	glGenTextures(1, &depthMap);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-	SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//despues de crear la textura se la añadimos al framebuffer que hemos creado anterior mente
-	//solo necesitamos la informacion de profundidad cuando se renderize desde la vista de la camara por lo que no necesitamos ningun color, 
-	//aun asi como el framebuffer necesita uno, tanto el la lectura como en la escritura decimos que no vamos a pintar nignun color con GL_NONE
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFB);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(0.0f, 0.f, 0.0f, 1.0f);
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -148,52 +125,18 @@ int main()
 		glfwPollEvents();
 		camara->DoMovement(window);
 			
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		depth.Use();
-		//queremos que la projeccion desde el punto de vista de la luz sea perspectiva ya que la luz emitem los rayos paralelos entre ellos. 
-		GLfloat near_plane = 1.0f, far_plane = 7.5f;
-		mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-		//tambien hay que crear una matriz de vista especifica para la luz, utilizamos la matriz lookat
-		vec3 shadowLightDir(-2.0f, 4.0f, -1.0f);
-		mat4 lightView = lookAt(vec3(shadowLightDir),
-								vec3(0.0f, 0.0f, 0.0f),
-								vec3(0.0f, 1.0f, 0.0f));
-		//por ultimo las multriplicamos entre ellas para conseguir la transformacion de la matriz que transforma cada vector de espacio global a un espacio visible para la luz 
-		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-		GLint lightMod = glGetUniformLocation(shader.Program, "lightSpaceMatrix");
 
-		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFB);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		GLint modelLoc = glGetUniformLocation(depth.Program, "model");
-		mat4 model = cubo1->GetModelMatrix();
-		mat4 modelpared = cuboGrande->GetModelMatrix();
-
-		//RenderScene(simpleDepthShader);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		// Reset viewport
-		glViewport(0, 0, WIDTH, HEIGHT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUniformMatrix4fv(lightMod, 1, GL_FALSE, value_ptr(lightSpaceMatrix));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		cuboGrande->Draw();
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-		cubo1->Draw();
-
-
-
-
-
-		//shader.Use();
+		
+		shader.Use();
 		material->ActivateTextures();
 		material->SetMaterial(&shader);
 		material->SetShininess(&shader);
 		vec3 posCam = camara->posicionCamara();
-		//directional.SetDirection(lightDir);
-		//directional.SetLight(&shader, posCam);
+		directional.SetDirection(lightDir);
+		directional.SetLight(&shader, posCam);
 
 	/*	puntual.SetAtt(1.0f, 0.22f, 0.20f);
 		puntual.SetLight(&shader, posCam);
@@ -216,18 +159,18 @@ int main()
 		cubo1->Move(mov);
 		mat4 projection;
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
-		 modelLoc = glGetUniformLocation(shader.Program, "model");
+		GLint modelLoc = glGetUniformLocation(shader.Program, "model");
 		GLint viewLoc = glGetUniformLocation(shader.Program, "view");
 		GLint projLoc = glGetUniformLocation(shader.Program, "projection");
 
-		/*glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
-		 model = cubo1->GetModelMatrix();
+		mat4 model = cubo1->GetModelMatrix();
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 		cubo1->Draw();
 		mat4 modelpared = cuboGrande->GetModelMatrix();
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelpared));
-		cuboGrande->Draw();*/
+		cuboGrande->Draw();
 
 
 
