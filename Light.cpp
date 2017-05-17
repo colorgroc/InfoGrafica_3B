@@ -46,6 +46,7 @@ void Light::SetAperture(float min, float max) {
 void Light::SetLight(Shader *shad, vec3 CamPos) {
 	std::string variable;
 	glUniform3f(glGetUniformLocation(shad->Program, "viewPos"), CamPos.x, CamPos.y, CamPos.z);
+	glUniform1f(glGetUniformLocation(shad->Program, "gamma"), 1.2f);
 	switch (LightType) {
 	case DIRECTIONAL:	
 		glUniform3f(glGetUniformLocation(shad->Program, "directionLight.lightColor"), Color.x, Color.y, Color.z);
