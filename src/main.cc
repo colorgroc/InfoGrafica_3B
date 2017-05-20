@@ -34,16 +34,15 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 GLuint generateAttachmentTexture(GLboolean depth, GLboolean stencil);
 GLuint loadTexture(GLchar* path);
-//GLuint loadTextureAlpha(GLchar* path);
 
-/*Object *lampara1;
+Object *lampara1;
 Object *lampara2;
 Object *lampara3;
 Object *lampara4;
-Object *lampara5;*/
+Object *lampara5;
 Object *cubo1; 
 Object *cuboGrande;
-//Material *material;
+Material *material;
 Camera *camara;
 
 
@@ -94,21 +93,20 @@ int main()
 	// Define the viewport dimensions
 	glViewport(0, 0, WIDTH, HEIGHT);
 
-	// Setup some OpenGL options
-	// Setup some OpenGL options
 	glDepthFunc(GL_LESS);
 	//glEnable(GL_DEPTH_TEST);
 	//glDepthFunc(GL_ALWAYS);
 
-	//Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
-	//Shader pared("./src/dirLight.vertexshader", "./src/pared.fragmentshader");
-//	Shader depth("./src/depthShader.vertexshader", "./src/depthShader.fragmentshader");
-	/*Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
+	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
+	Shader pared("./src/dirLight.vertexshader", "./src/pared.fragmentshader");
+	Shader shader("./src/vertex.vertexshader", "./src/fragment.fragmentshader");
+	/*
+	Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
 	Model modelo("./src/spider/spider.obj");
 	Model modelo2("./src/spider/empty_mat.obj");
 	Model modelo3("./src/spider/WusonOBJ.obj");*/
 
-	Shader shader("./src/frameBufferVertex.vertexshader", "./src/frameBufferFrag.fragmentshader");
+	Shader bufferShader("./src/frameBufferVertex.vertexshader", "./src/frameBufferFrag.fragmentshader");
 	Shader screenShader("./src/screenVertx.vertexshader", "./src/screenFrag.fragmentshader");
 
 
@@ -116,16 +114,16 @@ int main()
 	lampara2 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz2.x, luz2.y, luz2.z), Object::cube);
 	lampara3 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz3.x, luz3.y, luz3.z), Object::cube);
 	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
-	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);*/
-	//cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
-	//cuboGrande = new Object(vec3(5.f, 3.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
-	camara = new Camera(vec3(0.0f, 0.0f, 1.0f), vec3(0.0), 0.05, 45.f);
-	/*material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
+	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);
+	cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
+	cuboGrande = new Object(vec3(5.f, 3.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande*/
+	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
 	Light directional(luz1, lightDir, vec3(0.4f), color1, vec3(1.f), vec3(1.f), Light::DIRECTIONAL, 1);
 	Light puntual(luz2, lightDir, vec3(0.2f), color2, vec3(1.0), vec3(1.0), Light::POINT, 0);
 	Light puntual2(luz4, lightDir, vec3(0.2f), color3, vec3(2.0), vec3(2.0), Light::POINT, 1);
 	Light focal(luz3, lightFocDir, vec3(0.2f), color4, vec3(10.0), vec3(10.0), Light::SPOT, 1);
-	Light focal2(luz5, lightFocDir, vec3(0.2f),color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);*/
+	Light focal2(luz5, lightFocDir, vec3(0.2f),color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);
+	camara = new Camera(vec3(0.0f, 0.0f, 1.0f), vec3(0.0), 0.05, 45.f);
 
 	//cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
 	//cuboGrande = new Object(vec3(5.f, 3.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
@@ -174,49 +172,6 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
 		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
 		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f
-
-
-		/*-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f*/
 	};
 
 	GLuint VAO, VBO;
@@ -238,8 +193,8 @@ int main()
 	glEnableVertexAttribArray(2);
 	glBindVertexArray(0);
 
-	GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-								 // Positions   // TexCoords
+	GLfloat quadVertices[] = {  //se crea un quad el cual ocupara toda la pantalla
+		 // Positions   // TexCoords
 		-1.0f,  1.0f,  0.0f, 1.0f,
 		-1.0f, -1.0f,  0.0f, 0.0f,
 		1.0f, -1.0f,  1.0f, 0.0f,
@@ -251,36 +206,35 @@ int main()
 
 	GLuint quadVAO, quadVBO;
 	glGenVertexArrays(1, &quadVAO);
-	glGenBuffers(1, &quadVBO);
-	glBindVertexArray(quadVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
 	glBindVertexArray(0);
 
 	// Load textures
-	GLuint cubeTexture = loadTexture("./src/container2.png");
-	//GLuint floorTexture = loadTexture("./src/metal.png");
-
+	GLuint cubeTexture = loadTexture("./src/difuso.png"); //se asigna la textura cargada
 
 	//FRAMEBUFFER AQUI
 	GLuint framebuffer;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	// Create a color attachment texture
+	// Se atacha la textura al framebuffer
 	GLuint textureColorbuffer = generateAttachmentTexture(false, false);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-	// Create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+	// se crea un render buffer object, es util ya que solo queremos el color buffer
 	GLuint rbo;
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIDTH, HEIGHT); // Use a single renderbuffer object for both a depth AND stencil buffer.
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // Now actually attach it
-																								  // Now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); 
+	// Ahora ya esta creado el framebuffer y estan atachados sus valores
+																								  
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -288,10 +242,6 @@ int main()
 	// Game loop
 	while (!glfwWindowShouldClose(window))
 	{
-		/*GLfloat currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;*/
-
 		// Check and call events
 		glfwPollEvents();
 		camara->DoMovement(window);
@@ -299,19 +249,19 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		// Clear all attached buffers        
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // We're not using stencil buffer so why bother with clearing?
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //no limpiamos el stencil buffer pq no o utilizamos
 
 		glEnable(GL_DEPTH_TEST);
 
-		//shader.Use();
-		//material->ActivateTextures();
+		shader.Use();
+	//	material->ActivateTextures();
 		//material->SetMaterial(&shader);
 		//material->SetShininess(&shader);
-		//vec3 posCam = camara->posicionCamara();
-		//directional.SetDirection(lightDir);
-		//directional.SetLight(&shader, posCam);
+		vec3 posCam = camara->posicionCamara();
+		directional.SetDirection(lightDir);
+		directional.SetLight(&shader, posCam);
 
-	/*	puntual.SetAtt(1.0f, 0.22f, 0.20f);
+		puntual.SetAtt(1.0f, 0.22f, 0.20f);
 		puntual.SetLight(&shader, posCam);
 
 		puntual2.SetAtt(1.0f, 0.22f, 0.20f);
@@ -323,33 +273,25 @@ int main()
 
 		focal2.SetAtt(1.0, 0.09, 0.032);
 		focal2.SetLight(&shader, posCam);
-		focal2.SetAperture(12.f, 20.f);*/
-		shader.Use();
+		focal2.SetAperture(12.f, 20.f);
+		//bufferShader.Use();
 		glm::mat4 model;
 		mat4 view = camara->LookAt();
 		mat4 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
+		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "view"), 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
 
-
-		/*// Floor
-		glBindVertexArray(floorVAO);
-		glBindTexture(GL_TEXTURE_2D, floorTexture);
-		model = glm::mat4();
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		glBindVertexArray(0);*/
 		// Cubes
 		glBindVertexArray(VAO);
 		glBindTexture(GL_TEXTURE_2D, cubeTexture);
 		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		model = glm::mat4();
 		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		//glBindVertexArray(cuboGrande->ho);
+
 		/*glBindTexture(GL_TEXTURE_2D, cubeTexture);
 		mat4 view = camara->LookAt();
 		mat4 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
@@ -411,7 +353,7 @@ int main()
 
 		//lampara5->Draw();
 		*/
-	/*	pared.Use();
+		/*	pared.Use();
 		material->ActivateTextures();
 		material->SetMaterial(&pared);
 		material->SetShininess(&pared);
@@ -426,8 +368,6 @@ int main()
 		mat4 modelpared = cuboGrande->GetModelMatrix();
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelpared));
 		cuboGrande->Draw();*/
-
-
 		// CARGAR MODELO 3D
 		/*	modelShader.Use();
 
@@ -459,7 +399,7 @@ int main()
 		//RESTABLECER FRAMEBUFFER
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		// Clear all relevant buffers
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
+		//glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
 		glClear(GL_COLOR_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST); // We don't care about depth information when rendering a single quad
 
@@ -467,7 +407,7 @@ int main()
 		//DIBUJADO EN LA PANTALLA DE QUADS DEL BUFFER
 		screenShader.Use();
 		glBindVertexArray(quadVAO);
-		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// Use the color attachment texture as the texture of the quad plane
+		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);// pintamos con el color atachado de la texutra anteriormente
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 
@@ -550,7 +490,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
 GLuint loadTexture(GLchar* path)
 {
-	//Generate texture ID and load texture data 
+	//se crea una textura y se le asigna la imagen deseada
 	GLuint textureID;
 	glGenTextures(1, &textureID);
 	int width, height;
@@ -560,10 +500,10 @@ GLuint loadTexture(GLchar* path)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	/*glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);*/
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return textureID;
@@ -589,6 +529,7 @@ GLuint generateAttachmentTexture(GLboolean depth, GLboolean stencil)
 	if (!depth && !stencil)
 		glTexImage2D(GL_TEXTURE_2D, 0, attachment_type, WIDTH, HEIGHT, 0, attachment_type, GL_UNSIGNED_BYTE, NULL);
 	else // Using both a stencil and depth test, needs special format arguments
+		//a diferencia de las texturas anteriores, el ultimo paramtro es NULL ya que se va a ir generando dinamicamente
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, WIDTH, HEIGHT, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
