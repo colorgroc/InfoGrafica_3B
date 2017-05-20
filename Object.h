@@ -6,9 +6,11 @@
 using namespace glm;
 
 
+ 
 class Object {
 
 public:
+	GLuint returnVao();
 	enum FigureType {
 		cube = 0,
 	};
@@ -16,15 +18,14 @@ public:
 	Object(vec3 scale, vec3 rotation, vec3 position, FigureType typef);
 	~Object();
 
+ GLuint VBO, VAO, EBO;
 	void Draw();
 	void Move(vec3 translation);
 	void Rotate(vec3 rota);
 	void Scale(vec3 scal);
 	void Delete();
 	mat4 GetModelMatrix();
-	GLuint VBO, VAO, EBO;
 	vec3 GetPosition();
-	GLuint hola;
 
 private:
 //	mat4 model;

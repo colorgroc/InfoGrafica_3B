@@ -12,9 +12,9 @@ public:
 	void SetMaterial(Shader *shad);
 	void ActivateTextures();
 	void SetShininess(Shader *shad);
-private:
 	GLuint TextDiff, TextSpec;
 	float Shininess;
+private:
 
 };
 

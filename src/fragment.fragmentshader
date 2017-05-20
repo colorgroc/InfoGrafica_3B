@@ -73,8 +73,6 @@ vec3 CalcPointLight(PointLight light);
 
 void main(){
 
-   // vec3 norm = normalize(Normal);
-    //vec3 viewdir = normalize(viewPos - FragPos);
 	vec3 res;
 	res = CalcDirLight(directionLight);
 	
@@ -82,14 +80,12 @@ void main(){
 		res += CalcPointLight(pointLight[i]);
 	}
 	
-	
-	
 	for(int i = 0; i< NUM_MAX_SLIGHTS; i++){
 		res += CalcFocLight(focalLight[i]);
 	}
-	vec3 fragColor = pow(res.rgb, vec3(1.0/gamma));
+	//vec3 fragColor = pow(res.rgb, vec3(1.0/gamma));
 	
-	color = vec4(fragColor, 1.0);
+	color = vec4(res, 1.0);
 
 
 }
@@ -109,7 +105,6 @@ vec3 CalcDirLight(DirectionLight light){
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir),0.0), material.shininess);
 	vec3 especular = light.dirSpec *spec * light.lightColor * vec3(texture(material.texSpecular, TexCoords));
-		
 	vec3 res = (ambient + especular + diffuse) * light.objectColor;
 	return res;
 }
@@ -117,6 +112,7 @@ vec3 CalcDirLight(DirectionLight light){
 vec3 CalcFocLight(FocalLight light){
 	float Phi = cos(radians(light.aperturaMx)); //apertura del foco
 	vec3 lightDir = normalize(light.lightPos - FragPos);
+
 	float Theta = dot(lightDir,normalize(-light.lightdir));
 	float d = length(light.lightPos-FragPos);
 	float Fatt = 1/(light.c1+(light.c2*d)+0.032*(d*d));
