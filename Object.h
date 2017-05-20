@@ -22,10 +22,11 @@ public:
 	void Scale(vec3 scal);
 	void Delete();
 	mat4 GetModelMatrix();
+	GLuint VBO, VAO, EBO;
 	vec3 GetPosition();
+	GLuint hola;
 
 private:
-	GLuint VBO, VAO, EBO;
 //	mat4 model;
 	vec3 position;
 	vec3 scale;
