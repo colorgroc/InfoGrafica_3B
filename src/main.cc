@@ -113,7 +113,7 @@ int main()
 	lampara3 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz3.x, luz3.y, luz3.z), Object::cube);
 	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
 	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);
-	 cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
+	cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
 	cuboGrande = new Object(vec3(5.f, 3.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
 	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
 	Light directional(luz1, lightDir, vec3(0.4f), color1, vec3(1.f), vec3(1.f), Light::DIRECTIONAL, 1);
@@ -216,7 +216,7 @@ int main()
 
 	// Load textures
 	GLuint cubeTexture =loadTexture("./src/difuso.png"); //se asigna la textura cargada
-
+	//GLuint cubeTexture2 = loadTexture("./src/difuso.png"); //se asigna la textura cargada
 	//FRAMEBUFFER AQUI
 	GLuint framebuffer;
 	glGenFramebuffers(1, &framebuffer);
@@ -252,46 +252,30 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 
 		shader.Use();
-	//	material->ActivateTextures();
+
+		//material->ActivateTextures();
 		//material->SetMaterial(&shader);
 		//material->SetShininess(&shader);
 		vec3 posCam = camara->posicionCamara();
-	//	directional.SetDirection(lightDir);
-		//directional.SetLight(&shader, posCam);
+		directional.SetDirection(lightDir);
+		directional.SetLight(&shader, posCam);
 
-		//puntual.SetAtt(1.0f, 0.22f, 0.20f);
-		//puntual.SetLight(&shader, posCam);
+		puntual.SetAtt(1.0f, 0.22f, 0.20f);
+		puntual.SetLight(&shader, posCam);
 
-	/*	puntual2.SetAtt(1.0f, 0.22f, 0.20f);
+		puntual2.SetAtt(1.0f, 0.22f, 0.20f);
 		puntual2.SetLight(&shader, posCam);
 
 		focal.SetAtt(1.0, 0.09, 0.032);
 		focal.SetLight(&shader, posCam);
-		focal.SetAperture(12.f, 20.f);*/
+		focal.SetAperture(12.f, 20.f);
 
 		focal2.SetAtt(1.0, 0.09, 0.032);
 		focal2.SetLight(&shader, posCam);
 		focal2.SetAperture(12.f, 20.f);
-		//bufferShader.Use();
 		glm::mat4 model;
 		mat4 view = camara->LookAt();
-		mat4 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
 
-		// Cubes
-		glBindVertexArray(VAO);
-		glBindTexture(GL_TEXTURE_2D, cubeTexture);
-		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		/*glBindTexture(GL_TEXTURE_2D, cubeTexture);
-		mat4 view = camara->LookAt();
 		mat4 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
@@ -299,15 +283,36 @@ int main()
 		cubo1->Rotate(rotacion);
 		cubo1->Move(mov);
 
-		mat4 model = cubo1->GetModelMatrix();
+		 model = cubo1->GetModelMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(model));
 		cubo1->Draw();
 
 		mat4 modelpared = cuboGrande->GetModelMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(modelpared));
-		cuboGrande->Draw();*/
+		cuboGrande->Draw();
 
-		glBindVertexArray(0);
+	/*	bufferShader.Use();
+		 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "view"), 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
+
+		// Cubes
+		glBindVertexArray(VAO);
+		glBindTexture(GL_TEXTURE_2D, cubeTexture);
+		//glBindTexture(GL_TEXTURE_2D, cubeTexture2);
+		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		model = glm::mat4();
+		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);*/
+
+
+	//	glBindTexture(GL_TEXTURE_2D, cubeTexture);
+
+		//glBindVertexArray(0);
 
 
 		//CUBO PEQUEÑO, LAMPARA
@@ -325,31 +330,31 @@ int main()
 		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color1.x,color1.y, color1.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model1));
 
-		//lampara1->Draw();
+		lampara1->Draw();
 
 		mat4 model2 = lampara2->GetModelMatrix();
 		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color2.x, color2.y, color2.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
 
-	//	lampara2->Draw();
+		lampara2->Draw();
 
 		mat4 model3 = lampara3->GetModelMatrix();
 		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color4.x, color4.y, color4.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model3));
 
-		//lampara3->Draw();
+		lampara3->Draw();
 
 		mat4 model4 = lampara4->GetModelMatrix();
 		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color3.x, color3.y, color3.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model4));
 
-	//	lampara4->Draw();
+		lampara4->Draw();
 
 		mat4 model5 = lampara5->GetModelMatrix();
 		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color5.x, color5.y, color5.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
 
-		//lampara5->Draw();
+		lampara5->Draw();
 		
 		/*	pared.Use();
 		material->ActivateTextures();
