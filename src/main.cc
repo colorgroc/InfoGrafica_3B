@@ -91,20 +91,20 @@ int main()
 	// Define the viewport dimensions
 	glViewport(0, 0, WIDTH, HEIGHT);
 
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LESS); ///ESTO Q ES??!
 	//glEnable(GL_DEPTH_TEST);
 	//glDepthFunc(GL_ALWAYS);
 
 	Shader shaderLight("./src/LightVertexShader.vertexshader", "./src/LightFragmentShader.fragmentshader");
 	Shader pared("./src/dirLight.vertexshader", "./src/pared.fragmentshader");
 	Shader shader("./src/vertex.vertexshader", "./src/fragment.fragmentshader");
-	/*
+	
 	Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
 	Model modelo("./src/spider/spider.obj");
 	Model modelo2("./src/spider/empty_mat.obj");
-	Model modelo3("./src/spider/WusonOBJ.obj");*/
+	Model modelo3("./src/spider/WusonOBJ.obj");
 
-	Shader bufferShader("./src/frameBufferVertex.vertexshader", "./src/frameBufferFrag.fragmentshader");
+//	Shader bufferShader("./src/frameBufferVertex.vertexshader", "./src/frameBufferFrag.fragmentshader");
 	Shader screenShader("./src/screenVertx.vertexshader", "./src/screenFrag.fragmentshader");
 
 
@@ -115,7 +115,7 @@ int main()
 	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);
 	cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
 	cuboGrande = new Object(vec3(5.f, 3.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
-	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
+//	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
 	Light directional(luz1, lightDir, vec3(0.4f), color1, vec3(1.f), vec3(1.f), Light::DIRECTIONAL, 1);
 	Light puntual(luz2, lightDir, vec3(0.2f), color2, vec3(1.0), vec3(1.0), Light::POINT, 0);
 	Light puntual2(luz4, lightDir, vec3(0.2f), color3, vec3(2.0), vec3(2.0), Light::POINT, 1);
@@ -123,12 +123,9 @@ int main()
 	Light focal2(luz5, lightFocDir, vec3(0.2f), color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);
 	camara = new Camera(vec3(0.0f, 0.0f, 1.0f), vec3(0.0), 0.05, 45.f);
 
-	//Material mat("./src/difuso.png", "./src/especular.png", 32.f);
-	//	material->SetMaterial(&shaderLight);
-	//mat.SetMaterial(&shaderLight);
 
 	GLfloat quadVertices[] = {  //se crea un quad el cual ocupara toda la pantalla
-								// Positions   // TexCoords
+		// Positions   // TexCoords
 		-1.0f,  1.0f,  0.0f, 1.0f,
 		-1.0f, -1.0f,  0.0f, 0.0f,
 		1.0f, -1.0f,  1.0f, 0.0f,
@@ -153,15 +150,14 @@ int main()
 	// Load textures
 	//GLuint cubeTexture = loadTexture("./src/difuso.png"); //se asigna la textura cargada
 	//GLuint cubeTexture2 = loadTexture("./src/difuso.png"); //se asigna la textura cargada
+	
 	//FRAMEBUFFER AQUI
 	GLuint framebuffer;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	// Se atacha la textura al framebuffer
-	//material->T
 	GLuint textureColorbuffer = generateAttachmentTexture(false, false);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
 	// se crea un render buffer object, es util ya que solo queremos el color buffer
 	GLuint rbo;
 	glGenRenderbuffers(1, &rbo);
@@ -178,7 +174,6 @@ int main()
 	// Game loop
 	while (!glfwWindowShouldClose(window))
 	{
-		// Check and call events
 		glfwPollEvents();
 		camara->DoMovement(window);
 		//INICIALIZAR FRAMEBUFFER
@@ -189,11 +184,8 @@ int main()
 
 		glEnable(GL_DEPTH_TEST);
 
+		//llamamaos al shader con el cual aplicaremos las luzes
 		shader.Use();
-
-		//material->ActivateTextures();
-		//material->SetMaterial(&shader);
-		//material->SetShininess(&shader);
 		vec3 posCam = camara->posicionCamara();
 		directional.SetDirection(lightDir);
 		directional.SetLight(&shader, posCam);
@@ -228,9 +220,9 @@ int main()
 		mat4 modelpared = cuboGrande->GetModelMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(modelpared));
 		cuboGrande->Draw();
+		//las luzes haran efecto sobre el cubo pequeño q se puede mover y las paredes
 
-
-		//CUBO PEQUEÑO, LAMPARA
+		//llamamos al shader para que pinte las lamapras, simplemente son cubos de un color
 		shaderLight.Use();
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
@@ -271,24 +263,25 @@ int main()
 
 		lampara5->Draw();
 
-		/*	pared.Use();
-		material->ActivateTextures();
-		material->SetMaterial(&pared);
-		material->SetShininess(&pared);
-		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+		//RESTABLECER FRAMEBUFFER
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// Clear all relevant buffers
+		//glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
+		glClear(GL_COLOR_BUFFER_BIT);
+		glDisable(GL_DEPTH_TEST); // We don't care about depth information when rendering a single quad
+							  
+		//DIBUJADO EN LA PANTALLA DE QUADS DEL BUFFER, todo lo que se ha pintado anteriormente se pinta en el quad
+		screenShader.Use();
+		glUniform1i(glGetUniformLocation(screenShader.Program, "postProcessing"), postProcessing);
+		glUniform1f(glGetUniformLocation(screenShader.Program, "gamma"), 0.5f);
+		glBindVertexArray(quadVAO);
+		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);// pintamos con el color atachado de la texutra anteriormente
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
 
-		modelLoc = glGetUniformLocation(shaderLight.Program, "model");
-		viewLoc = glGetUniformLocation(shaderLight.Program, "view");
-		projLoc = glGetUniformLocation(shaderLight.Program, "projection");
-
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
-		mat4 modelpared = cuboGrande->GetModelMatrix();
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelpared));
-		cuboGrande->Draw();*/
+		//los modelos se pintan despues de que se pinte el quad, por lo que los postprocesos no les afectan
 		// CARGAR MODELO 3D
-		/*	modelShader.Use();
-
+		modelShader.Use();
 		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 		view = camara->LookAt();
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
@@ -312,24 +305,7 @@ int main()
 		model6 = glm::scale(model6, glm::vec3(0.1f, 0.1f, 0.1f));
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
 		modelo3.Draw(modelShader);
-		}*/
-
-		//RESTABLECER FRAMEBUFFER
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		// Clear all relevant buffers
-		//glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
-		glClear(GL_COLOR_BUFFER_BIT);
-		glDisable(GL_DEPTH_TEST); // We don't care about depth information when rendering a single quad
-
-								  // Draw Screen
-								  //DIBUJADO EN LA PANTALLA DE QUADS DEL BUFFER
-		screenShader.Use();
-		glUniform1i(glGetUniformLocation(screenShader.Program, "postProcessing"), postProcessing);
-		glBindVertexArray(quadVAO);
-		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);// pintamos con el color atachado de la texutra anteriormente
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		glBindVertexArray(0);
-
+		}
 
 		// Swap the buffers
 		glfwSwapBuffers(window);
@@ -395,17 +371,18 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		m2 = 0;
 	}
 
-	if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+		postProcessing = 0;
+	}
+	else if (key == GLFW_KEY_Y && action == GLFW_PRESS) {
 		postProcessing = 1;
 	}
-	else if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_U && action == GLFW_PRESS) {
 		postProcessing = 2;
 	}
-	else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_G && action == GLFW_PRESS) {
 		postProcessing = 3;
 	}
-	//VA O NO?
-	//HOLA
 
 }
 

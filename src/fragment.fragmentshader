@@ -58,7 +58,7 @@ struct PointLight{
 uniform PointLight pointLight[NUM_MAX_PLIGHTS];
 uniform FocalLight focalLight[NUM_MAX_SLIGHTS];
 uniform vec3 viewPos;
-uniform float gamma;
+//uniform float gamma;
 out vec4 color;
 in vec2 TexCoords;
 
