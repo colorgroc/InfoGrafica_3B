@@ -14,12 +14,12 @@ public:
 	mat4 LookAt();
 	GLfloat GetFOV();
 	vec3 posicionCamara();
+	GLfloat DeltaTime;
 private:
 	vec3 cameraFront;
 	vec3 cameraPos;
 	vec3 cameraUp;
 	vec3 cameraX;
-	GLfloat DeltaTime;
 	GLfloat Lastframe;
 	GLfloat LastMx;
 	GLfloat LastMy;
