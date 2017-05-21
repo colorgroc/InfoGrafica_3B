@@ -38,7 +38,7 @@ Object *lampara2;
 Object *lampara3;
 Object *lampara4;
 Object *lampara5;
-Object *cubo1; 
+Object *cubo1;
 Object *cuboGrande;
 Material *material;
 Camera *camara;
@@ -54,7 +54,7 @@ vec3 luz5(1, 0.7, 0);
 vec3 posicionCubo(0.0, -3.0, 0.0);
 
 vec3 lightDir(0.0, 0.0, -1.0);
-
+int postProcessing = 0;
 
 vec3 lightFocDir(0.0, -1.0, 0.0);
 
@@ -76,14 +76,14 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	
+
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
-	
+
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
-	
+
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glewInit();
@@ -108,7 +108,7 @@ int main()
 	Shader screenShader("./src/screenVertx.vertexshader", "./src/screenFrag.fragmentshader");
 
 
-	lampara1 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(-5.0, 0.0,0.0), Object::cube);//lampara
+	lampara1 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(-5.0, 0.0, 0.0), Object::cube);//lampara
 	lampara2 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz2.x, luz2.y, luz2.z), Object::cube);
 	lampara3 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz3.x, luz3.y, luz3.z), Object::cube);
 	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
@@ -120,79 +120,15 @@ int main()
 	Light puntual(luz2, lightDir, vec3(0.2f), color2, vec3(1.0), vec3(1.0), Light::POINT, 0);
 	Light puntual2(luz4, lightDir, vec3(0.2f), color3, vec3(2.0), vec3(2.0), Light::POINT, 1);
 	Light focal(luz3, lightFocDir, vec3(0.2f), color4, vec3(10.0), vec3(10.0), Light::SPOT, 1);
-	Light focal2(luz5, lightFocDir, vec3(0.2f),color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);
+	Light focal2(luz5, lightFocDir, vec3(0.2f), color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);
 	camara = new Camera(vec3(0.0f, 0.0f, 1.0f), vec3(0.0), 0.05, 45.f);
 
-	//cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
-	//cuboGrande = new Object(vec3(5.f, 3.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
-
-	GLfloat VertexBufferObject[] = {
-		//front
-		//front
-		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-		0.5f ,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-		//back
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-		//left	
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		//right
-		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		//down
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-		//up
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f
-	};
-
-	GLuint VAO, VBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexBufferObject), VertexBufferObject, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-	glBindVertexArray(0);
+	//Material mat("./src/difuso.png", "./src/especular.png", 32.f);
+	//	material->SetMaterial(&shaderLight);
+	//mat.SetMaterial(&shaderLight);
 
 	GLfloat quadVertices[] = {  //se crea un quad el cual ocupara toda la pantalla
-		 // Positions   // TexCoords
+								// Positions   // TexCoords
 		-1.0f,  1.0f,  0.0f, 1.0f,
 		-1.0f, -1.0f,  0.0f, 0.0f,
 		1.0f, -1.0f,  1.0f, 0.0f,
@@ -201,42 +137,44 @@ int main()
 		1.0f, -1.0f,  1.0f, 0.0f,
 		1.0f,  1.0f,  1.0f, 1.0f
 	};
-	
+
 	GLuint quadVAO, quadVBO;
 	glGenVertexArrays(1, &quadVAO);
-		glGenBuffers(1, &quadVBO);
-		glBindVertexArray(quadVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
 	glBindVertexArray(0);
 
 	// Load textures
-	GLuint cubeTexture =loadTexture("./src/difuso.png"); //se asigna la textura cargada
+	//GLuint cubeTexture = loadTexture("./src/difuso.png"); //se asigna la textura cargada
 	//GLuint cubeTexture2 = loadTexture("./src/difuso.png"); //se asigna la textura cargada
 	//FRAMEBUFFER AQUI
 	GLuint framebuffer;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	// Se atacha la textura al framebuffer
+	//material->T
 	GLuint textureColorbuffer = generateAttachmentTexture(false, false);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
 	// se crea un render buffer object, es util ya que solo queremos el color buffer
 	GLuint rbo;
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIDTH, HEIGHT); // Use a single renderbuffer object for both a depth AND stencil buffer.
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); 
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 	// Ahora ya esta creado el framebuffer y estan atachados sus valores
-																								  
+
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
+
 	// Game loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -283,36 +221,13 @@ int main()
 		cubo1->Rotate(rotacion);
 		cubo1->Move(mov);
 
-		 model = cubo1->GetModelMatrix();
+		model = cubo1->GetModelMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(model));
 		cubo1->Draw();
 
 		mat4 modelpared = cuboGrande->GetModelMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(modelpared));
 		cuboGrande->Draw();
-
-	/*	bufferShader.Use();
-		 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
-		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "view"), 1, GL_FALSE, value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
-
-		// Cubes
-		glBindVertexArray(VAO);
-		glBindTexture(GL_TEXTURE_2D, cubeTexture);
-		//glBindTexture(GL_TEXTURE_2D, cubeTexture2);
-		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(bufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);*/
-
-
-	//	glBindTexture(GL_TEXTURE_2D, cubeTexture);
-
-		//glBindVertexArray(0);
 
 
 		//CUBO PEQUEÑO, LAMPARA
@@ -327,7 +242,7 @@ int main()
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
 		mat4 model1 = lampara1->GetModelMatrix();
-		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color1.x,color1.y, color1.z);
+		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color1.x, color1.y, color1.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model1));
 
 		lampara1->Draw();
@@ -355,7 +270,7 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
 
 		lampara5->Draw();
-		
+
 		/*	pared.Use();
 		material->ActivateTextures();
 		material->SetMaterial(&pared);
@@ -379,24 +294,24 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		mat4 model6;
-		
+
 		if (m1 == 1) {
-			model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
-			model6 = glm::scale(model6, glm::vec3(0.005f, 0.005f,0.005f));
-			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
-			modelo.Draw(modelShader);
+		model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
+		model6 = glm::scale(model6, glm::vec3(0.005f, 0.005f,0.005f));
+		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
+		modelo.Draw(modelShader);
 		}
 		else if (m2 == 1) {
-			model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
-			model6 = glm::scale(model6, glm::vec3(0.09f, 0.09f, 0.09f));
-			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
-			modelo2.Draw(modelShader);
+		model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
+		model6 = glm::scale(model6, glm::vec3(0.09f, 0.09f, 0.09f));
+		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
+		modelo2.Draw(modelShader);
 		}
 		else if (m3 == 1) {
-			model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
-			model6 = glm::scale(model6, glm::vec3(0.1f, 0.1f, 0.1f));
-			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
-			modelo3.Draw(modelShader);
+		model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
+		model6 = glm::scale(model6, glm::vec3(0.1f, 0.1f, 0.1f));
+		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
+		modelo3.Draw(modelShader);
 		}*/
 
 		//RESTABLECER FRAMEBUFFER
@@ -406,9 +321,10 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST); // We don't care about depth information when rendering a single quad
 
-		// Draw Screen
-		//DIBUJADO EN LA PANTALLA DE QUADS DEL BUFFER
+								  // Draw Screen
+								  //DIBUJADO EN LA PANTALLA DE QUADS DEL BUFFER
 		screenShader.Use();
+		glUniform1i(glGetUniformLocation(screenShader.Program, "postProcessing"), postProcessing);
 		glBindVertexArray(quadVAO);
 		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);// pintamos con el color atachado de la texutra anteriormente
 		glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -467,18 +383,30 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		m1 = 1;
 		m2 = 0;
 		m3 = 0;
-	}	
+	}
 	else if (key == GLFW_KEY_O && action == GLFW_PRESS) {
 		m2 = 1;
 		m1 = 0;
 		m3 = 0;
-	}	
+	}
 	else if (key == GLFW_KEY_P && action == GLFW_PRESS) {
 		m3 = 1;
 		m1 = 0;
 		m2 = 0;
 	}
-		
+
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+		postProcessing = 1;
+	}
+	else if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+		postProcessing = 2;
+	}
+	else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+		postProcessing = 3;
+	}
+	//VA O NO?
+	//HOLA
+
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -487,7 +415,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	
+
 	camara->MouseMove(window, xpos, ypos);
 }
 
@@ -532,7 +460,7 @@ GLuint generateAttachmentTexture(GLboolean depth, GLboolean stencil)
 	if (!depth && !stencil)
 		glTexImage2D(GL_TEXTURE_2D, 0, attachment_type, WIDTH, HEIGHT, 0, attachment_type, GL_UNSIGNED_BYTE, NULL);
 	else // Using both a stencil and depth test, needs special format arguments
-		//a diferencia de las texturas anteriores, el ultimo paramtro es NULL ya que se va a ir generando dinamicamente
+		 //a diferencia de las texturas anteriores, el ultimo paramtro es NULL ya que se va a ir generando dinamicamente
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, WIDTH, HEIGHT, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

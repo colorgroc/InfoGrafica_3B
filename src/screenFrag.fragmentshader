@@ -1,12 +1,21 @@
 #version 330 core
 in vec2 TexCoords;
 out vec4 color;
-/*
+
+uniform sampler2D screenTexture;
+uniform int postProcessing;
+
 void main()
 { 
     // color = vec4(vec3(1.0 - texture(screenTexture, TexCoords)), 1.0);
-	color = texture(screenTexture, TexCoords);
-}*/
+	if (postProcessing == 0)
+		color = texture(screenTexture, TexCoords);
+	else if(postProcessing == 1)
+		color = vec4(vec3(1.0 - texture(screenTexture, TexCoords)), 1.0);
+	else if(postProcessing == 2){
+		color = vec4(vec3(1.0 - texture(screenTexture, TexCoords)), 1.0);
+		}
+/*		
 uniform sampler2D screenTexture;
 const float blurSizeH = 1.0 / 300.0;
 const float blurSizeV = 1.0 / 200.0;
@@ -18,4 +27,5 @@ void main()
             sum += texture(screenTexture,vec2(TexCoords.x + x * blurSizeH, TexCoords.y + y * blurSizeV)
             ) / 81.0;
     color = sum;
+*/
 }
