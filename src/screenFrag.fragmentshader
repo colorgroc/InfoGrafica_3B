@@ -41,8 +41,8 @@ void main()
 	else if(postProcessing == 5){ //pixelado
 	
 		float pixels = 248.0f;
-        float anchRect = 10.0f * (1.0 / pixels);
-        float altRect = 10.0f * (1.0 / pixels);
+        float anchRect = 5.0f * (1.0 / pixels);
+        float altRect = 5.0f * (1.0 / pixels);
 		//floor recoje los valores (decimales) más pequeños, más cerca del .0
         vec2 Coord = vec2(anchRect * floor(TexCoords.x / anchRect), altRect * floor(TexCoords.y / altRect));
         color = texture(screenTexture, Coord);

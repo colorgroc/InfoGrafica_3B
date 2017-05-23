@@ -188,6 +188,7 @@ int main()
 
 		//llamamaos al shader con el cual aplicaremos las luzes
 		shader.Use();
+		
 		vec3 posCam = camara->posicionCamara();
 		directional.SetDirection(lightDir);
 		directional.SetLight(&shader, posCam);
@@ -211,7 +212,7 @@ int main()
 		mat4 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
-
+		
 		cubo1->Rotate(rotacion);
 		cubo1->Move(mov);
 
