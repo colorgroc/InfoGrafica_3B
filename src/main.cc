@@ -101,28 +101,32 @@ int main()
 	Shader shader("./src/vertex.vertexshader", "./src/fragment.fragmentshader");
 	
 	Shader modelShader("./src/modelShader.vertexshader", "./src/modelShader.fragmentshader");
-	Model modelo("./src/spider/spider.obj");
-	Model modelo2("./src/spider/empty_mat.obj");
-	Model modelo3("./src/spider/WusonOBJ.obj");
+	//Model modelo("./src/spider/spider.obj");
+	Model modelo("./src/SoccerBall/Soccer Ball.obj");
+	//Model modelo2("./src/spider/empty_mat.obj");
+	Model modelo2("./src/estadioFutbol/estadio.obj");
+	//Model modelo3("./src/TimeChamber/TimeChamber.obj");
 
 //	Shader bufferShader("./src/frameBufferVertex.vertexshader", "./src/frameBufferFrag.fragmentshader");
 	Shader screenShader("./src/screenVertx.vertexshader", "./src/screenFrag.fragmentshader");
 
 
-	lampara1 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(-5.0, 0.0, 0.0), Object::cube);//lampara
+	//lampara1 = new Object(vec3(0.1f), vec3(0.0f, 0.5f, 0.0f), vec3(-5.0, 0.0, 0.0), Object::cube);//lampara
 	lampara2 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz2.x, luz2.y, luz2.z), Object::cube);
 	lampara3 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz3.x, luz3.y, luz3.z), Object::cube);
 	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
 	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);
+
 	cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
 	cuboGrande = new Object(vec3(5.f, 3.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
 //	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
+	//material = new Material("./src/SoccerBall/soccer_ball_colors_edit.png", 200.f);
 	Light directional(luz1, lightDir, vec3(0.4f), color1, vec3(1.f), vec3(1.f), Light::DIRECTIONAL, 1);
 	Light puntual(luz2, lightDir, vec3(0.2f), color2, vec3(1.0), vec3(1.0), Light::POINT, 0);
 	Light puntual2(luz4, lightDir, vec3(0.2f), color3, vec3(2.0), vec3(2.0), Light::POINT, 1);
 	Light focal(luz3, lightFocDir, vec3(0.2f), color4, vec3(10.0), vec3(10.0), Light::SPOT, 1);
 	Light focal2(luz5, lightFocDir, vec3(0.2f), color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);
-	camara = new Camera(vec3(0.0f, 0.0f, 1.0f), vec3(0.0), 0.05, 45.f);
+	camara = new Camera(vec3(0.0f, 0.5f, 2.0f), vec3(0.0), 0.05, 45.f);
 
 
 	GLfloat quadVertices[] = {  //se crea un quad el cual ocupara toda la pantalla
@@ -149,7 +153,8 @@ int main()
 	glBindVertexArray(0);
 
 	// Load textures
-	//GLuint cubeTexture = loadTexture("./src/difuso.png"); //se asigna la textura cargada
+	GLuint pelotaTex = loadTexture("./src/difuso.png"); //se asigna la textura cargada
+	//material->SetMaterial(&shader);
 	//GLuint cubeTexture2 = loadTexture("./src/difuso.png"); //se asigna la textura cargada
 	
 	//FRAMEBUFFER AQUI
@@ -207,22 +212,68 @@ int main()
 		focal2.SetLight(&shader, posCam);
 		focal2.SetAperture(12.f, 20.f);
 		glm::mat4 model;
-		mat4 view = camara->LookAt();
 
+		/*mat4 view = camara->LookAt();
+		mat4 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));*/
+
+		/*mat4 modelpared = cuboGrande->GetModelMatrix();
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(modelpared));
+		cuboGrande->Draw();*/
+
+		//modelShader.Use();
+
+		mat4 view = camara->LookAt();
 		mat4 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
 		
+
 		cubo1->Rotate(rotacion);
+		cubo1->Move(mov);
+		model = cubo1->GetModelMatrix();
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, pelotaTex);
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(model));
+		cubo1->Draw();
+		//pelota
+		/*mat4 model6;	
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, pelotaTex);
+		model6 = glm::translate(model6, glm::vec3(0.0f, -0.97f, 0.0f));
+		model6 = glm::translate(model6, mov);
+		//model6 = glm::rotate(model6, radians(rotacion.x), rotacion);
+		//model6 = glm::rotate(model6, radians(rotacion.y), rotacion);
+		model6 = glm::scale(model6, glm::vec3(0.001f, 0.001f, 0.001f));
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
+		glUniform1i(glGetUniformLocation(shader.Program, "texDiffuse"), 0);
+		//glUniform1i(glGetUniformLocation(shader.Program, "material.texSpecular"), 1)
+		modelo.Draw(shader);*/
+		
+		modelShader.Use();
+		mat4 model7;
+		model7 = glm::translate(model7, glm::vec3(0.0f, -1.f, 0.0f));
+		model7 = glm::scale(model7, glm::vec3(0.1f, 0.1f, 0.1f));
+		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model7));
+		modelo2.Draw(modelShader);
+
+		/*mat4 model8;
+		model8 = glm::translate(model8, glm::vec3(0.0f, -1.f, 0.0f));
+		model8 = glm::scale(model8, glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model8));
+		modelo3.Draw(modelShader);*/
+
+		/*cubo1->Rotate(rotacion);
 		cubo1->Move(mov);
 
 		model = cubo1->GetModelMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(model));
-		cubo1->Draw();
+		cubo1->Draw();*/
 
-		mat4 modelpared = cuboGrande->GetModelMatrix();
+		/*mat4 modelpared = cuboGrande->GetModelMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(modelpared));
-		cuboGrande->Draw();
+		cuboGrande->Draw();*/
 		//las luzes haran efecto sobre el cubo pequeño q se puede mover y las paredes
 
 		//llamamos al shader para que pinte las lamapras, simplemente son cubos de un color
@@ -236,11 +287,11 @@ int main()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
-		mat4 model1 = lampara1->GetModelMatrix();
+		/*mat4 model1 = lampara1->GetModelMatrix();
 		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color1.x, color1.y, color1.z);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model1));
 
-		lampara1->Draw();
+		lampara1->Draw();*/
 
 		mat4 model2 = lampara2->GetModelMatrix();
 		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color2.x, color2.y, color2.z);
@@ -272,9 +323,9 @@ int main()
 		view = camara->LookAt();
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		mat4 model6;
+		//mat4 model6;
 
-		if (m1 == 1) {
+	/*	if (m1 == 1) {
 			model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
 			model6 = glm::scale(model6, glm::vec3(0.005f, 0.005f, 0.005f));
 			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
@@ -291,7 +342,7 @@ int main()
 			model6 = glm::scale(model6, glm::vec3(0.1f, 0.1f, 0.1f));
 			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
 			modelo3.Draw(modelShader);
-		}
+		}*/
 
 		//RESTABLECER FRAMEBUFFER
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

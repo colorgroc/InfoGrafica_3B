@@ -5,14 +5,8 @@ in vec2 TexCoords;
 out vec4 color;
 
 uniform sampler2D texture_diffuse1;
-const float blurSizeH = 1.0 / 300.0;
-const float blurSizeV = 1.0 / 200.0;
 void main()
 {    
     color = vec4(texture(texture_diffuse1, TexCoords));
-    /*vec4 sum = vec4(0.0);
-    for (int x = -4; x <= 4; x++)
-        for (int y = -4; y <= 4; y++)
-            sum += texture( texFramebuffer, vec2(TexCoords.x + x * blurSizeH, TexCoords.y + y * blurSizeV)) / 81.0;
-    color = sum;*/
+    
 }

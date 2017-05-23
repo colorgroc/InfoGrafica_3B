@@ -9,6 +9,8 @@ struct Material{
 	float shininess;
 };
 uniform Material material;
+//uniform sampler2D texDiffuse;
+//uniform sampler2D texSpecular;
 
 struct DirectionLight{
 	vec3 lightColor;

@@ -1,5 +1,6 @@
 #include "material.h"
 
+//Material::Material(char *DiffPath, float Shini) {
 Material::Material(char *DiffPath, char*SpectPath, float Shini) {
 	//diffuse
 	glGenTextures(1, &TextDiff);
@@ -34,7 +35,7 @@ Material::Material(char *DiffPath, char*SpectPath, float Shini) {
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image2);
 	glBindTexture(GL_TEXTURE_2D, 0);
-
+	
 	Shininess = Shini;
 }
 
@@ -43,7 +44,7 @@ Material::~Material() {
 }
 
 void Material::SetMaterial(Shader *shad) {
-	glUniform1i(glGetUniformLocation(shad->Program, "material.texSpecular"), 1);
+	//glUniform1i(glGetUniformLocation(shad->Program, "material.texSpecular"), 1);
 	glUniform1i(glGetUniformLocation(shad->Program, "material.texDiffuse"), 0);
 }
 
