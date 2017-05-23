@@ -145,12 +145,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\assimp\include;.\include\glew\include;.\include\glm;.\include\glfw\include;.\include\soil\src;C:\OpenGL\glm;C:\OpenGL\soil\src;C:\OpenGL\glfw\include;C:\OpenGL\glew\include;C:\OpenGL\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>.\assimp\lib\x86;.\include\glfw\lib-vc2015;.\include\glew\lib\Release\Win32;.\include\soil\lib;C:\OpenGL\assimp\lib\x86;C:\OpenGL\soil\lib;C:\OpenGL\glew\lib\Release\Win32;C:\OpenGL\glfw\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libSOIL.lib;opengl32.lib;glew32s.lib;glfw3.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

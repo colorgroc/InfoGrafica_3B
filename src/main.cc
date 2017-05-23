@@ -188,6 +188,7 @@ int main()
 
 		//llamamaos al shader con el cual aplicaremos las luzes
 		shader.Use();
+		
 		vec3 posCam = camara->posicionCamara();
 		directional.SetDirection(lightDir);
 		directional.SetLight(&shader, posCam);
@@ -211,7 +212,7 @@ int main()
 		mat4 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
-
+		
 		cubo1->Rotate(rotacion);
 		cubo1->Move(mov);
 
@@ -265,6 +266,33 @@ int main()
 
 		lampara5->Draw();
 
+
+		modelShader.Use();
+		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+		view = camara->LookAt();
+		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		mat4 model6;
+
+		if (m1 == 1) {
+			model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
+			model6 = glm::scale(model6, glm::vec3(0.005f, 0.005f, 0.005f));
+			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
+			modelo.Draw(modelShader);
+		}
+		else if (m2 == 1) {
+			model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
+			model6 = glm::scale(model6, glm::vec3(0.09f, 0.09f, 0.09f));
+			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
+			modelo2.Draw(modelShader);
+		}
+		else if (m3 == 1) {
+			model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
+			model6 = glm::scale(model6, glm::vec3(0.1f, 0.1f, 0.1f));
+			glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
+			modelo3.Draw(modelShader);
+		}
+
 		//RESTABLECER FRAMEBUFFER
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		// Clear all relevant buffers
@@ -277,7 +305,6 @@ int main()
 		glUniform1i(glGetUniformLocation(screenShader.Program, "postProcessing"), postProcessing);
 		glUniform1f(glGetUniformLocation(screenShader.Program, "gamma"), 0.5f);
 	
-		glUniform1f(glGetUniformLocation(screenShader.Program, "offset"), glfwGetTime()/ 1000.f * 2 * 3.14159*0.75f); //nose pq no va amb el temps TT
 		glBindVertexArray(quadVAO);
 		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);// pintamos con el color atachado de la texutra anteriormente
 		glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -285,31 +312,7 @@ int main()
 
 		//los modelos se pintan despues de que se pinte el quad, por lo que los postprocesos no les afectan
 		// CARGAR MODELO 3D
-		modelShader.Use();
-		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
-		view = camara->LookAt();
-		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		mat4 model6;
-
-		if (m1 == 1) {
-		model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
-		model6 = glm::scale(model6, glm::vec3(0.005f, 0.005f,0.005f));
-		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
-		modelo.Draw(modelShader);
-		}
-		else if (m2 == 1) {
-		model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
-		model6 = glm::scale(model6, glm::vec3(0.09f, 0.09f, 0.09f));
-		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
-		modelo2.Draw(modelShader);
-		}
-		else if (m3 == 1) {
-		model6 = glm::translate(model6, glm::vec3(0.0f, -1.f, -3.0f));
-		model6 = glm::scale(model6, glm::vec3(0.1f, 0.1f, 0.1f));
-		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
-		modelo3.Draw(modelShader);
-		}
+		
 
 		// Swap the buffers
 		glfwSwapBuffers(window);
@@ -392,12 +395,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 	else if (key == GLFW_KEY_J && action == GLFW_PRESS) {
 		postProcessing = 5;
-	}
-	else if (key == GLFW_KEY_K && action == GLFW_PRESS) {
-		postProcessing = 6;
-	}
-	else if (key == GLFW_KEY_L && action == GLFW_PRESS) {
-		postProcessing = 7;
 	}
 
 }
