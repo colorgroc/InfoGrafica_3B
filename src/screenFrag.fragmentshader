@@ -8,7 +8,6 @@ const float blurSizeH = 1.0 / 500.0;
 const float blurSizeV = 1.0 / 500.0;
 uniform float gamma;
 float PI = 3.14159f;
-float sharpAmount = 30.0f;
 
 void main()
 { 
@@ -44,6 +43,7 @@ void main()
 		float pixels = 248.0f;
         float anchRect = 10.0f * (1.0 / pixels);
         float altRect = 10.0f * (1.0 / pixels);
+		//floor recoje los valores (decimales) más pequeños, más cerca del .0
         vec2 Coord = vec2(anchRect * floor(TexCoords.x / anchRect), altRect * floor(TexCoords.y / altRect));
         color = texture(screenTexture, Coord);
 	}
