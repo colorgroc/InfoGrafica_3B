@@ -31,7 +31,7 @@ void main()
 
 	else if(postProcessing == 4){ //efecto ondulado 
 		//las funciones trigonometricas ayudan a crear este efecto ondulado.
-		float freq = 100.f;
+		float freq = 50.f;
 		float amplitud = 0.01;
 		vec2 texCoord = TexCoords;
 		texCoord.y = texCoord.y + sin(texCoord.x * freq)*amplitud;
