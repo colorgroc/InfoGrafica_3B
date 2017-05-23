@@ -277,7 +277,6 @@ int main()
 		glUniform1i(glGetUniformLocation(screenShader.Program, "postProcessing"), postProcessing);
 		glUniform1f(glGetUniformLocation(screenShader.Program, "gamma"), 0.5f);
 	
-		glUniform1f(glGetUniformLocation(screenShader.Program, "offset"), glfwGetTime()/ 1000.f * 2 * 3.14159*0.75f); //nose pq no va amb el temps TT
 		glBindVertexArray(quadVAO);
 		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);// pintamos con el color atachado de la texutra anteriormente
 		glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -396,9 +395,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	else if (key == GLFW_KEY_K && action == GLFW_PRESS) {
 		postProcessing = 6;
 	}
-	else if (key == GLFW_KEY_L && action == GLFW_PRESS) {
-		postProcessing = 7;
-	}
+
 
 }
 

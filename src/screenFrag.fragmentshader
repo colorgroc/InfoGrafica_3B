@@ -7,50 +7,54 @@ uniform int postProcessing;
 const float blurSizeH = 1.0 / 500.0;
 const float blurSizeV = 1.0 / 500.0;
 uniform float gamma;
-uniform float offset;
+float PI = 3.14159f;
 float sharpAmount = 30.0f;
 
 void main()
 { 
 	if (postProcessing == 0)
 		color = texture(screenTexture, TexCoords);
-	else if(postProcessing == 1)
+		
+	else if(postProcessing == 1) //inversion colores
 		color = vec4(vec3(1.0 - texture(screenTexture, TexCoords)), 1.0);
-	else if(postProcessing == 2){
+		
+	else if(postProcessing == 2){ //blur
 		vec4 sum = vec4(0.0);
 		for (int x = -4; x <= 4; x++)
 			for (int y = -4; y <= 4; y++)
 				sum += texture(screenTexture,vec2(TexCoords.x + x * blurSizeH, TexCoords.y + y * blurSizeV)) / 81.0;
 				color = sum;
 			}
-	else if(postProcessing == 3){
+	else if(postProcessing == 3){ //correccion gamma
 		vec3 fragColor = pow((texture(screenTexture, TexCoords)).rgb, vec3(1.0/gamma));
 		color = vec4(fragColor, 1.0);
 	}
-	else if(postProcessing == 4){
-		vec2 texCoord = TexCoords;
-		texCoord.x += sin(texCoord.y * 4*2*3.14159 + offset)/100;
-		color = texture(screenTexture, texCoord);
-	}
-	else if(postProcessing == 5){
 
-		color = texture(screenTexture, TexCoords);
-		color.r *= sin(TexCoords.y*100);
-		color.g *= cos(TexCoords.y*200);
-		color.b *= sin(TexCoords.y*300);
-	}
-	else if(postProcessing == 6){
+	else if(postProcessing == 4){ //efecto ondulado 
+		//las funciones trigonometricas ayudan a crear este efecto ondulado.
+		float freq = 100.f;
+		float amplitud = 0.01;
 		vec2 texCoord = TexCoords;
-		texCoord.y = texCoord.y + sin(texCoord.x * 200)*0.01;
+		texCoord.y = texCoord.y + sin(texCoord.x * freq)*amplitud;
 		color = texture(screenTexture, texCoord);
 	}
-	else if(postProcessing == 7){
+	else if(postProcessing == 5){ //gravado piedra 
+	//este post proceso se consigue con una combinación del efecto blur con la conversion del color a escala de grises
 		vec2 texCoord = TexCoords;
-		color.rgb = vec3(0.5f, 0.5f, 0.5f);
-		color.a = 1.0f;
-		color -= texture(screenTexture, texCoord - 0.0001f)*sharpAmount;
+		color.rgb = vec3(0.5f, 0.5f, 0.5f); //asignamos el color gris
+		color -= texture(screenTexture, texCoord - 0.0001f)*sharpAmount; //el blur multiplicado por la nitidez
 		color += texture(screenTexture, texCoord + 0.0001f)*sharpAmount;
+		//float avg = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		float avg = (color.r + color.g + color.b)/3.0f;
+		color = vec4(avg, avg, avg, 1.0);
+		
+	}
+	else if(postProcessing == 6){ //pixelado
 	
-		//color = vec4((color.r + color.g + color.b)/3.0f, 1.0f); //no va
+		float Pixels = 248.0f;
+        float dx = 15.0f * (1.0 / Pixels);
+        float dy = 10.0f * (1.0 / Pixels);
+        vec2 Coord = vec2(dx * floor(TexCoords.x / dx), dy * floor(TexCoords.y / dy));
+        color = texture(screenTexture, Coord);
 	}
 }
