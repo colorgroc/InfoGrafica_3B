@@ -38,23 +38,13 @@ void main()
 		texCoord.y = texCoord.y + sin(texCoord.x * freq)*amplitud;
 		color = texture(screenTexture, texCoord);
 	}
-	else if(postProcessing == 5){ //gravado piedra 
-	//este post proceso se consigue con una combinación del efecto blur con la conversion del color a escala de grises
-		vec2 texCoord = TexCoords;
-		color.rgb = vec3(0.5f, 0.5f, 0.5f); //asignamos el color gris
-		color -= texture(screenTexture, texCoord - 0.0001f)*sharpAmount; //el blur multiplicado por la nitidez
-		color += texture(screenTexture, texCoord + 0.0001f)*sharpAmount;
-		//float avg = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
-		float avg = (color.r + color.g + color.b)/3.0f;
-		color = vec4(avg, avg, avg, 1.0);
-		
-	}
-	else if(postProcessing == 6){ //pixelado
+
+	else if(postProcessing == 5){ //pixelado
 	
-		float Pixels = 248.0f;
-        float dx = 15.0f * (1.0 / Pixels);
-        float dy = 10.0f * (1.0 / Pixels);
-        vec2 Coord = vec2(dx * floor(TexCoords.x / dx), dy * floor(TexCoords.y / dy));
+		float pixels = 248.0f;
+        float anchRect = 10.0f * (1.0 / pixels);
+        float altRect = 10.0f * (1.0 / pixels);
+        vec2 Coord = vec2(anchRect * floor(TexCoords.x / anchRect), altRect * floor(TexCoords.y / altRect));
         color = texture(screenTexture, Coord);
 	}
 }
