@@ -67,5 +67,8 @@
     <None Include="src\focalLight.fragmentshader">
       <Filter>Archivos de recursos</Filter>
     </None>
+    <None Include="src\fragment.fragmentshader">
+      <Filter>Archivos de recursos</Filter>
+    </None>
   </ItemGroup>
 </Project>
