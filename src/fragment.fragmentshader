@@ -8,8 +8,8 @@ struct Material{
 	sampler2D texDiffuse;
 	float shininess;
 };
-uniform Material material;
-//uniform sampler2D texDiffuse;
+//uniform Material material;
+uniform sampler2D texDiffuse;
 //uniform sampler2D texSpecular;
 
 struct DirectionLight{

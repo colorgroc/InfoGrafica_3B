@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\focalLight.fragmentshader" />
+    <None Include="src\fragment.fragmentshader" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3FC640D2-EFA2-403C-A406-DF29A85CFD5D}</ProjectGuid>

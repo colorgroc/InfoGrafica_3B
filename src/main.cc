@@ -45,7 +45,7 @@ Material *material;
 Camera *camara;
 
 
-const GLuint WIDTH = 800, HEIGHT = 800;
+const GLuint WIDTH = 1920, HEIGHT = 1080;
 
 vec3 luz1(0.0, 0.0, 0.0);
 vec3 luz2(-2, 0.0, 0.0);
@@ -78,7 +78,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", glfwGetPrimaryMonitor(), nullptr);
 	glfwMakeContextCurrent(window);
 
 	glfwSetKeyCallback(window, key_callback);
@@ -162,8 +162,8 @@ int main()
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	// Se atacha la textura al framebuffer
-	GLuint textureColorbuffer = generateAttachmentTexture(false, false);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+	pelotaTex = generateAttachmentTexture(false, false);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pelotaTex, 0);
 	// se crea un render buffer object, es util ya que solo queremos el color buffer
 	GLuint rbo;
 	glGenRenderbuffers(1, &rbo);
@@ -228,13 +228,13 @@ int main()
 		mat4 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
-		
 
+		//si hace falta, como no va a ver codigo, pintamos el cubo sin usar la clase object y ale.
 		cubo1->Rotate(rotacion);
 		cubo1->Move(mov);
 		model = cubo1->GetModelMatrix();
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, pelotaTex);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, pelotaTex);
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(model));
 		cubo1->Draw();
 		//pelota
@@ -357,7 +357,7 @@ int main()
 		glUniform1f(glGetUniformLocation(screenShader.Program, "gamma"), 0.5f);
 	
 		glBindVertexArray(quadVAO);
-		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);// pintamos con el color atachado de la texutra anteriormente
+		glBindTexture(GL_TEXTURE_2D, pelotaTex);// pintamos con el color atachado de la texutra anteriormente
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 
