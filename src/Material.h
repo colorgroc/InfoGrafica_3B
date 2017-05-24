@@ -7,14 +7,15 @@
 class Material {
 
 public:
-	Material(char *DiffPath, char*SpectPath, float Shini);
+	Material(char *DiffPath);
+	//Material(char *DiffPath, float Shini);
 	~Material();
 	void SetMaterial(Shader *shad);
 	void ActivateTextures();
 	void SetShininess(Shader *shad);
-private:
 	GLuint TextDiff, TextSpec;
 	float Shininess;
+private:
 
 };
 

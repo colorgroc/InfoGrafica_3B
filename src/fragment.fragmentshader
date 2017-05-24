@@ -3,11 +3,12 @@
 #define NUM_MAX_PLIGHTS 4
 #define NUM_MAX_SLIGHTS 4
 
-struct Material{
-	sampler2D texSpecular;
-	sampler2D texDiffuse;
-	float shininess;
-};
+/*struct Material{
+	//sampler2D texSpecular;
+	//sampler2D texDiffuse;
+	//float shininess;
+	//sampler2D tex;
+	};*/
 
 uniform sampler2D tex;
 

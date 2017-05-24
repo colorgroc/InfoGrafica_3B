@@ -111,8 +111,7 @@ int main()
 	lampara3 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz3.x, luz3.y, luz3.z), Object::cube);
 	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
 	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);
-	
-	
+	//Material material1("./src/container2.png");
 	cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
 	cuboGrande = new Object(vec3(5.f, 3.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
 	Light directional(luz1, lightDir, vec3(0.4f), color1, vec3(1.f), vec3(1.f), Light::DIRECTIONAL, 1);
@@ -122,6 +121,7 @@ int main()
 	Light focal2(luz5, lightFocDir, vec3(0.2f), color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);
 	camara = new Camera(vec3(0.0f, 0.0f, 1.0f), vec3(0.0), 0.05, 45.f);
 
+	GLuint hola = loadTexture("./src/container2.png");
 
 	GLfloat quadVertices[] = {  //se crea un quad el cual ocupara toda la pantalla
 		// Positions   // TexCoords
@@ -151,7 +151,7 @@ int main()
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	// Se atacha la textura al framebuffer
-	//GLuint textureColorbuffer = generateAttachmentTexture(false, false);
+
 	GLuint textureColorbuffer = generateAttachmentTexture(false, false);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
 	// se crea un render buffer object, es util ya que solo queremos el color buffer
@@ -175,15 +175,13 @@ int main()
 		//INICIALIZAR FRAMEBUFFER
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		// Clear all attached buffers        
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.05f, 0.0f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //no limpiamos el stencil buffer pq no o utilizamos
 
 		glEnable(GL_DEPTH_TEST);
 
 		//llamamaos al shader con el cual aplicaremos las luzes
 		shader.Use();
-		//GLuint pelotaTex = loadTexture("./src/difuso.png"); //se asigna la textura cargada
-		//glUniform1i(glGetUniformLocation(shader.Program, "tex"), 0);
 
 		vec3 posCam = camara->posicionCamara();
 		directional.SetDirection(lightDir);
@@ -213,7 +211,7 @@ int main()
 		cubo1->Rotate(rotacion);
 		cubo1->Move(mov);
 		model = cubo1->GetModelMatrix();
-		
+		glUniform1i(glGetUniformLocation(shader.Program, "tex"), hola);
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(model));
 		
 		cubo1->Draw();
@@ -236,7 +234,6 @@ int main()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
-		lampara1->Draw();
 
 		mat4 model2 = lampara2->GetModelMatrix();
 		glUniform3f(glGetUniformLocation(shaderLight.Program, "Color"), color2.x, color2.y, color2.z);
@@ -286,10 +283,6 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);// pintamos con el color atachado de la texutra anteriormente
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
-
-		//los modelos se pintan despues de que se pinte el quad, por lo que los postprocesos no les afectan
-		// CARGAR MODELO 3D
-		
 
 		// Swap the buffers
 		glfwSwapBuffers(window);
