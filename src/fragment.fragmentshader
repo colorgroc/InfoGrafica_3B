@@ -8,8 +8,8 @@ struct Material{
 	sampler2D texDiffuse;
 	float shininess;
 };
-uniform Material material;
-//uniform sampler2D texDiffuse;
+//uniform Material material;
+uniform sampler2D tex;
 //uniform sampler2D texSpecular;
 
 struct DirectionLight{
@@ -74,20 +74,30 @@ vec3 CalcPointLight(PointLight light);
 
 
 void main(){
-
-	vec3 res;
-	res = CalcDirLight(directionLight);
+	//vec3 res;
+	//res = CalcDirLight(directionLight);
+	vec4 res = texture(tex, TexCoords);
+	res.rgb = CalcDirLight(directionLight);
+	//vec3 point;
+	//vec3 spot;
 	
 	for(int i = 0; i< NUM_MAX_PLIGHTS; i++){
-		res += CalcPointLight(pointLight[i]);
+		//res = texture(tex, TexCoords);
+		res.rgb += CalcPointLight(pointLight[i]);
+		//res += CalcPointLight(pointLight[i]);
+		//point += CalcPointLight(pointLight[i]);
 	}
 	
 	for(int i = 0; i< NUM_MAX_SLIGHTS; i++){
-		res += CalcFocLight(focalLight[i]);
+	//res = texture(tex, TexCoords);
+		res.rgb += CalcFocLight(focalLight[i]);
+		//res += CalcFocLight(focalLight[i]);
+		//spot += CalcFocLight(focalLight[i]);
 	}
 	//vec3 fragColor = pow(res.rgb, vec3(1.0/gamma));
 	
-	color = vec4(res, 1.0);
+	color = vec4 (res.rgb , 1.0);
+	//color = vec4 (res , 1.0);
 
 
 }

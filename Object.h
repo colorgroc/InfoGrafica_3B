@@ -20,6 +20,7 @@ public:
 
  GLuint VBO, VAO, EBO;
 	void Draw();
+	//void Draw(GLuint textura);
 	void Move(vec3 translation);
 	void Rotate(vec3 rota);
 	void Scale(vec3 scal);

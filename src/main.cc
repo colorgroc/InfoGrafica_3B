@@ -110,17 +110,20 @@ int main()
 //	Shader bufferShader("./src/frameBufferVertex.vertexshader", "./src/frameBufferFrag.fragmentshader");
 	Shader screenShader("./src/screenVertx.vertexshader", "./src/screenFrag.fragmentshader");
 
+	shader.Use();
+	glUniform1i(glGetUniformLocation(shader.Program, "res = texture(texture_diffuse1, TexCoords)"), 0);
 
 	//lampara1 = new Object(vec3(0.1f), vec3(0.0f, 0.5f, 0.0f), vec3(-5.0, 0.0, 0.0), Object::cube);//lampara
 	lampara2 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz2.x, luz2.y, luz2.z), Object::cube);
 	lampara3 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz3.x, luz3.y, luz3.z), Object::cube);
 	lampara4 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz4.x, luz4.y, luz4.z), Object::cube);
 	lampara5 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz5.x, luz5.y, luz5.z), Object::cube);
-
+	
+	
 	cubo1 = new Object(vec3(0.3f), vec3(0.0, 0.0, 0.0), posicionCubo, Object::cube);//cubo grande
 	cuboGrande = new Object(vec3(5.f, 3.f, 8.f), vec3(0.0, 0.0, 0.0), vec3(0.0), Object::cube);//cubo grande
 //	material = new Material("./src/difuso.png", "./src/especular.png", 200.f);
-	//material = new Material("./src/SoccerBall/soccer_ball_colors_edit.png", 200.f);
+	//material = new Material("./src/SoccerBall/soccer_ball_colors_edit.png", "./src/SoccerBall/soccer_ball_colors_edit.png", 200.f);
 	Light directional(luz1, lightDir, vec3(0.4f), color1, vec3(1.f), vec3(1.f), Light::DIRECTIONAL, 1);
 	Light puntual(luz2, lightDir, vec3(0.2f), color2, vec3(1.0), vec3(1.0), Light::POINT, 0);
 	Light puntual2(luz4, lightDir, vec3(0.2f), color3, vec3(2.0), vec3(2.0), Light::POINT, 1);
@@ -128,6 +131,74 @@ int main()
 	Light focal2(luz5, lightFocDir, vec3(0.2f), color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);
 	camara = new Camera(vec3(0.0f, 0.5f, 2.0f), vec3(0.0), 0.05, 45.f);
 
+/*	GLuint VAO, VBO, EBO;
+	GLfloat VertexBufferObject[] = {
+		//front
+		//front
+		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+		0.5f ,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		//back
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+		//left	
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		//right
+		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		//down
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+		//up
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f
+
+	};
+
+
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexBufferObject), VertexBufferObject, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+	glBindVertexArray(0);*/
+
+	//material->SetMaterial(&shader);
 
 	GLfloat quadVertices[] = {  //se crea un quad el cual ocupara toda la pantalla
 		// Positions   // TexCoords
@@ -153,15 +224,18 @@ int main()
 	glBindVertexArray(0);
 
 	// Load textures
-	GLuint pelotaTex = loadTexture("./src/difuso.png"); //se asigna la textura cargada
+	//GLuint pelotaTex = loadTexture("./src/difuso.png"); //se asigna la textura cargada
 	//material->SetMaterial(&shader);
 	//GLuint cubeTexture2 = loadTexture("./src/difuso.png"); //se asigna la textura cargada
 	
+	//GLuint pelotaTex = loadTexture("./src/SoccerBall/soccer_ball_colors_edit.png"); //se asigna la textura cargada
+
 	//FRAMEBUFFER AQUI
 	GLuint framebuffer;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	// Se atacha la textura al framebuffer
+	//GLuint textureColorbuffer = generateAttachmentTexture(false, false);
 	GLuint textureColorbuffer = generateAttachmentTexture(false, false);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
 	// se crea un render buffer object, es util ya que solo queremos el color buffer
@@ -193,7 +267,10 @@ int main()
 
 		//llamamaos al shader con el cual aplicaremos las luzes
 		shader.Use();
-		
+
+		GLuint pelotaTex = loadTexture("./src/difuso.png"); //se asigna la textura cargada
+		glUniform1i(glGetUniformLocation(shader.Program, "tex"), 0);
+
 		vec3 posCam = camara->posicionCamara();
 		directional.SetDirection(lightDir);
 		directional.SetLight(&shader, posCam);
@@ -229,27 +306,47 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
 		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, pelotaTex);
+
+		/*glBindVertexArray(VAO);
+		glBindTexture(GL_TEXTURE_2D, pelotaTex);
+		model = glm::translate(model, glm::vec3(0.0f, -0.97f, 0.0f));
+		model = glm::translate(model, mov);
+		model = glm::rotate(model, radians(rotacion.x), rotacion);
+		model = glm::rotate(model, radians(rotacion.y), rotacion);
+		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f)); 
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);*/
 
 		cubo1->Rotate(rotacion);
 		cubo1->Move(mov);
 		model = cubo1->GetModelMatrix();
 		//glActiveTexture(GL_TEXTURE0);
 		//glBindTexture(GL_TEXTURE_2D, pelotaTex);
+		
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(model));
+		
 		cubo1->Draw();
 		//pelota
+		//material->ActivateTextures();
+		//modelShader.Use();
 		/*mat4 model6;	
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, pelotaTex);
+		
 		model6 = glm::translate(model6, glm::vec3(0.0f, -0.97f, 0.0f));
 		model6 = glm::translate(model6, mov);
 		//model6 = glm::rotate(model6, radians(rotacion.x), rotacion);
 		//model6 = glm::rotate(model6, radians(rotacion.y), rotacion);
-		model6 = glm::scale(model6, glm::vec3(0.001f, 0.001f, 0.001f));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
-		glUniform1i(glGetUniformLocation(shader.Program, "texDiffuse"), 0);
+		model6 = glm::scale(model6, glm::vec3(0.001f, 0.001f, 0.001f));*/
+		
+		
+		//glUniform1i(glGetUniformLocation(shader.Program, "tex"), 0);
+		//glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model6));
+		
+		
 		//glUniform1i(glGetUniformLocation(shader.Program, "material.texSpecular"), 1)
-		modelo.Draw(shader);*/
+		//modelo.Draw(shader);
 		
 		modelShader.Use();
 		mat4 model7;
@@ -472,10 +569,10 @@ GLuint loadTexture(GLchar* path)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image);
-	/*glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);*/
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return textureID;

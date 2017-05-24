@@ -20,7 +20,7 @@ Material::Material(char *DiffPath, char*SpectPath, float Shini) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//specular
-	glGenTextures(1, &TextSpec);
+	/*glGenTextures(1, &TextSpec);
 	glBindTexture(GL_TEXTURE_2D, TextSpec);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -34,7 +34,7 @@ Material::Material(char *DiffPath, char*SpectPath, float Shini) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image2);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);*/
 	
 	Shininess = Shini;
 }
@@ -45,7 +45,7 @@ Material::~Material() {
 
 void Material::SetMaterial(Shader *shad) {
 	//glUniform1i(glGetUniformLocation(shad->Program, "material.texSpecular"), 1);
-	glUniform1i(glGetUniformLocation(shad->Program, "material.texDiffuse"), 0);
+	glUniform1i(glGetUniformLocation(shad->Program, "tex"), 0);
 }
 
 void Material::SetShininess(Shader *shad) {
@@ -56,6 +56,6 @@ void Material::ActivateTextures() {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TextDiff);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, TextSpec);
+	/*glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, TextSpec);*/
 }

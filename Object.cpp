@@ -91,7 +91,7 @@ void Object::Scale(vec3 scal) {
 }
 
 mat4 Object::GetModelMatrix() {
-	glBindVertexArray(VAO);
+	//glBindVertexArray(VAO);
 	mat4 model;
 	model = translate(model, position);
 	model = rotate(model, radians(rotation.x), vec3(1.0, 0.0, 0.0));
