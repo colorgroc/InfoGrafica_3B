@@ -110,8 +110,8 @@ int main()
 //	Shader bufferShader("./src/frameBufferVertex.vertexshader", "./src/frameBufferFrag.fragmentshader");
 	Shader screenShader("./src/screenVertx.vertexshader", "./src/screenFrag.fragmentshader");
 
-	shader.Use();
-	glUniform1i(glGetUniformLocation(shader.Program, "tex"), 0);
+	//shader.Use();
+	//glUniform1i(glGetUniformLocation(shader.Program, "tex"), 0);
 
 	//lampara1 = new Object(vec3(0.1f), vec3(0.0f, 0.5f, 0.0f), vec3(-5.0, 0.0, 0.0), Object::cube);//lampara
 	lampara2 = new Object(vec3(0.1f), vec3(0.0f, 0.0f, 0.0f), vec3(luz2.x, luz2.y, luz2.z), Object::cube);
