@@ -31,7 +31,7 @@ using namespace std;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-GLuint generateAttachmentTexture(GLboolean depth, GLboolean stencil);
+GLuint generartextura();
 GLuint loadTexture(GLchar* path);
 
 Object *lampara1;
@@ -152,7 +152,7 @@ int main()
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	// Se atacha la textura al framebuffer
 
-	GLuint textureColorbuffer = generateAttachmentTexture(false, false);
+	GLuint textureColorbuffer = generartextura();
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
 	// se crea un render buffer object, es util ya que solo queremos el color buffer
 	GLuint rbo;
@@ -204,7 +204,7 @@ int main()
 
 
 		mat4 view = camara->LookAt();
-		mat4 projection = perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+		mat4 projection = perspective(radians(camara->GetFOV()), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, value_ptr(projection));
 		
@@ -225,7 +225,7 @@ int main()
 
 		//llamamos al shader para que pinte las lamapras, simplemente son cubos de un color
 		shaderLight.Use();
-		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+		projection = glm::perspective(radians(camara->GetFOV()), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
 		GLuint  modelLoc = glGetUniformLocation(shaderLight.Program, "model");
 		GLuint viewLoc = glGetUniformLocation(shaderLight.Program, "view");
@@ -261,7 +261,7 @@ int main()
 
 
 		modelShader.Use();
-		projection = glm::perspective(camara->GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+		projection = glm::perspective(radians(camara->GetFOV()), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 		view = camara->LookAt();
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(glGetUniformLocation(modelShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -402,26 +402,23 @@ GLuint loadTexture(GLchar* path)
 }
 
 // Generates a texture that is suited for attachments to a framebuffer
-GLuint generateAttachmentTexture(GLboolean depth, GLboolean stencil)
+GLuint generartextura()
 {
 	// What enum to use?
-	GLenum attachment_type;
+	/*GLenum attachment_type;
 	if (!depth && !stencil)
 		attachment_type = GL_RGB;
 	else if (depth && !stencil)
 		attachment_type = GL_DEPTH_COMPONENT;
 	else if (!depth && stencil)
-		attachment_type = GL_STENCIL_INDEX;
+		attachment_type = GL_STENCIL_INDEX;*/
 
 	//Generate texture ID and load texture data 
 	GLuint textureID;
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	if (!depth && !stencil)
-		glTexImage2D(GL_TEXTURE_2D, 0, attachment_type, WIDTH, HEIGHT, 0, attachment_type, GL_UNSIGNED_BYTE, NULL);
-	else // Using both a stencil and depth test, needs special format arguments
-		 //a diferencia de las texturas anteriores, el ultimo paramtro es NULL ya que se va a ir generando dinamicamente
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);

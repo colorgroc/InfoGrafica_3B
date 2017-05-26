@@ -21,7 +21,7 @@ void main()
 		vec4 sum = vec4(0.0);
 		for (int x = -4; x <= 4; x++)
 			for (int y = -4; y <= 4; y++)
-				sum += texture(screenTexture,vec2(TexCoords.x + x * blurSizeH, TexCoords.y + y * blurSizeV)) / 81.0;
+				sum += texture(screenTexture,vec2(TexCoords.x + x * blurSizeH, TexCoords.y + y * blurSizeV)) / 10.0;
 				color = sum;
 			}
 	else if(postProcessing == 3){ //correccion gamma
