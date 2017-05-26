@@ -138,7 +138,6 @@ int main()
 	Light focal2(luz5, lightFocDir, vec3(0.2f), color5, vec3(10.0), vec3(10.0), Light::SPOT, 0);
 	camara = new Camera(vec3(0.0f, 0.0f, 1.0f), vec3(0.0), 0.05, 45.f);
 
-	GLuint textura = loadTexture("./src/container2.png"); //intento fallido de poner textura
 
 	GLfloat quadVertices[] = {  //se crea un quad el cual ocupara toda la pantalla
 								// Posiciones   // TexCoords
@@ -227,7 +226,7 @@ int main()
 		cubo1->Rotate(rotacion);
 		cubo1->Move(mov);
 		model = cubo1->GetModelMatrix();
-		glUniform1i(glGetUniformLocation(shader.Program, "tex"), textura);//intento fallido de poner textura
+		//glUniform1i(glGetUniformLocation(shader.Program, "tex"), textura);//intento fallido de poner textura
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, value_ptr(model));
 
 		cubo1->Draw();
@@ -348,22 +347,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		mov -= vec3(0.1, 0.0, 0.0);
 	}
 	//....POSTPROCESOS....
-	if (key == GLFW_KEY_0 && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
 		postProcessing = 0;
 	}
-	else if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
 		postProcessing = 1;
 	}
-	else if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
 		postProcessing = 2;
 	}
-	else if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
 		postProcessing = 3;
 	}
-	else if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
 		postProcessing = 4;
 	}
-	else if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_6 && action == GLFW_PRESS) {
 		postProcessing = 5;
 	}
 
@@ -379,27 +378,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	camara->MouseMove(window, xpos, ypos);
 }
 
-GLuint loadTexture(GLchar* path)
-{
-	//se crea una textura y se le asigna la imagen deseada
-	GLuint textureID;
-	glGenTextures(1, &textureID);
-	int width, height;
-	unsigned char* image = SOIL_load_image(path, &width, &height, 0, SOIL_LOAD_RGB);
 
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(image);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return textureID;
-
-}
 
 
 GLuint generarTextura()
